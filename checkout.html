@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+    <header>
+        <h1>Checkout</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="checkout-section">
+            <h2>Order Details</h2>
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                <!-- PayPal Business Account -->
+                <input type="hidden" name="business" value="10crimson.blade01@gmail.com">
+                
+                <!-- Specify PayPal checkout type -->
+                <input type="hidden" name="cmd" value="_xclick">
+                
+                <!-- Item Details -->
+                <input type="hidden" name="item_name" value="Your Order">
+                <input type="hidden" name="amount" value="100"> <!-- Replace 100 with your total price dynamically -->
+                <input type="hidden" name="currency_code" value="USD">
+                
+                <!-- Shipping Address -->
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="address_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Shipping Address:</label>
+                    <textarea id="address" name="address_street" rows="4" required></textarea>
+                </div>
+
+                <!-- Select Size -->
+                <div class="form-group">
+                    <label for="size">Select Size:</label>
+                    <select id="size" name="item_size" required>
+                        <option value="S">Small (S)</option>
+                        <option value="M">Medium (M)</option>
+                        <option value="L">Large (L)</option>
+                        <option value="XL">Extra Large (XL)</option>
+                    </select>
+                </div>
+
+                <!-- Select Gender -->
+                <div class="form-group">
+                    <label for="gender">Select Gender:</label>
+                    <select id="gender" name="item_gender" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Unisex">Unisex</option>
+                    </select>
+                </div>
+                
+                <!-- Payment Button -->
+                <button type="submit" class="submit-btn">Pay with PayPal</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
+
