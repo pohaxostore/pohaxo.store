@@ -25,10 +25,10 @@
                 <!-- Hoodie 1 -->
                 <div class="product-card">
                     <img src="images/BALACRAVA.jpg" alt="Classic Hoodie">
-                    <h3>balacrava zip </h3>
+                    <h3>Balaclava Zip</h3>
                     <p>Stay warm and stylish with our Balaclava Hoodie. Featuring an integrated face cover, it's perfect for chilly weather or bold looks. Made from premium, breathable fabric for comfort and durability in any setting.</p>
                     <p class="price">$20.00</p>
-                    <button class="add-to-cart">Add to Cart</button>
+                    <button class="add-to-cart" onclick="addToCart('Balaclava Zip Hoodie', 20)">Add to Cart</button>
                 </div>
                 <!-- Hoodie 2 -->
                 <div class="product-card">
@@ -36,7 +36,7 @@
                     <h3>Graphic Hoodie</h3>
                     <p>Features a bold and modern graphic design.</p>
                     <p class="price">$50.00</p>
-                    <button class="add-to-cart">Add to Cart</button>
+                    <button class="add-to-cart" onclick="addToCart('Graphic Hoodie', 50)">Add to Cart</button>
                 </div>
                 <!-- Hoodie 3 -->
                 <div class="product-card">
@@ -44,7 +44,7 @@
                     <h3>Zip-Up Hoodie</h3>
                     <p>Easy-to-wear zip-up design with a cozy fit.</p>
                     <p class="price">$45.00</p>
-                    <button class="add-to-cart">Add to Cart</button>
+                    <button class="add-to-cart" onclick="addToCart('Zip-Up Hoodie', 45)">Add to Cart</button>
                 </div>
                 <!-- Hoodie 4 -->
                 <div class="product-card">
@@ -52,7 +52,7 @@
                     <h3>Oversized Hoodie</h3>
                     <p>Relaxed fit for ultimate comfort and style.</p>
                     <p class="price">$55.00</p>
-                    <button class="add-to-cart">Add to Cart</button>
+                    <button class="add-to-cart" onclick="addToCart('Oversized Hoodie', 55)">Add to Cart</button>
                 </div>
             </div>
         </section>
@@ -60,5 +60,23 @@
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
+
+    <script>
+        // تحميل السلة من localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // دالة لإضافة المنتج إلى السلة
+        function addToCart(productName, price) {
+            const product = { name: productName, price: price, quantity: 1 };
+            cart.push(product); // إضافة المنتج إلى السلة
+
+            // تحديث السلة في localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // إخطار المستخدم
+            alert(`${productName} added to cart!`);
+        }
+    </script>
 </body>
 </html>
+
