@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+    <title>Your Cart</title>
     <link rel="stylesheet" href="style1.css">
 </head>
 <body>
@@ -13,6 +13,7 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html" class="active">Cart</a></li>
                 <li><a href="contact.html">Contact Us</a></li>
             </ul>
         </nav>
@@ -31,6 +32,7 @@
                     </tr>
                 </thead>
                 <tbody id="cart-items">
+                    <!-- سيتم تحديث السلة هنا باستخدام JavaScript -->
                 </tbody>
             </table>
             <div class="cart-summary">
@@ -44,15 +46,13 @@
     </footer>
 
     <script>
-        let cart = [
-            { name: "Balaclava Zip Hoodie", price: 199, quantity: 1 },
-            { name: "Stylish Jacket", price: 299, quantity: 2 }
-        ];
+        // استرجاع السلة من localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
         function updateCart() {
             const cartItems = document.getElementById('cart-items');
             const totalPrice = document.getElementById('total-price');
-            cartItems.innerHTML = '';
+            cartItems.innerHTML = '';  // تنظيف السلة الحالية
             let total = 0;
 
             cart.forEach((item, index) => {
@@ -77,16 +77,21 @@
             totalPrice.innerText = `${total} DH`;
         }
 
+        // دالة لتحديث كمية المنتج
         function updateQuantity(index, quantity) {
             cart[index].quantity = parseInt(quantity);
+            localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
 
+        // دالة لحذف المنتج من السلة
         function removeItem(index) {
             cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
 
+        // دالة لإتمام الدفع
         function checkout() {
             if (cart.length === 0) {
                 alert("Your cart is empty. Add products before proceeding to checkout.");
@@ -100,8 +105,10 @@
             }
         }
 
-        updateCart();
+        // تحديث السلة عند تحميل الصفحة
+        window.onload = updateCart;
     </script>
 </body>
 </html>
+
 
