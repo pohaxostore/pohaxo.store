@@ -29,7 +29,7 @@
                 
                 <!-- Item Details -->
                 <input type="hidden" name="item_name" value="Your Order">
-                <input type="hidden" name="amount" value="100"> <!-- Replace 100 with your total price dynamically -->
+                <input type="hidden" name="amount" id="total-price-paypal" value="0"> <!-- Dynamically updated price -->
                 <input type="hidden" name="currency_code" value="USD">
                 
                 <!-- Shipping Address -->
@@ -71,7 +71,28 @@
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
+
+    <script>
+        // استرجاع السلة من localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // حساب المبلغ الإجمالي
+        let totalAmount = 0;
+
+        cart.forEach(item => {
+            totalAmount += item.price * item.quantity; // حساب المجموع الكلي
+        });
+
+        // تحديث المبلغ في PayPal
+        document.getElementById('total-price-paypal').value = totalAmount;
+
+        // عرض المبلغ الإجمالي على الصفحة (اختياري)
+        const totalPriceDisplay = document.createElement('p');
+        totalPriceDisplay.innerText = `Total Price: ${totalAmount} USD`;
+        document.querySelector('.checkout-section').appendChild(totalPriceDisplay);
+    </script>
 </body>
 </html>
+
 
 
