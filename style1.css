@@ -278,6 +278,22 @@ footer {
 .customization-name img:hover {
     transform: scale(1.05);
 }
+.track-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    color: white;
+    background-color: #007BFF; /* أزرق */
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.track-btn:hover {
+    background-color: #0056b3; /* لون أزرق أغمق عند التمرير */
+}
+
 
 
 
