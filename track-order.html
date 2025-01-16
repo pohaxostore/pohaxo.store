@@ -5,3 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order</title>
     <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+    <header>
+        <h1>Track Your Order</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="track-order.html" class="active">Track Order</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="track-order-section">
+            <h2>Enter Your Order ID</h2>
+            <form id="track-form">
+                <input type="text" id="order-id" placeholder="Enter your order ID" required>
+                <button type="submit">Track Order</button>
+            </form>
+            <div id="order-status" style="display:none;">
+                <h3>Order Status:</h3>
+                <p id="status-text"></p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('track-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const orderId = document.getElementById('order-id').value;
+
+            // Example: Retrieve order status based on orderId (you can replace with your database or API)
+            const orderStatus = getOrderStatus(orderId);
+
+            // Show the order status
+            document.getElementById('order-status').style.display = 'block';
+            document.getElementById('status-text').innerText = orderStatus;
+        });
+
+        function getOrderStatus(orderId) {
+            // For now, we return a static example. You can replace this logic with a database or API call
+            const orders = {
+                "123": "Your order is being processed.",
+                "124": "Your order is shipped.",
+                "125": "Your order has been delivered.",
+            };
+
+            return orders[orderId] || "Invalid Order ID.";
+        }
+    </script>
+</body>
+</html>
