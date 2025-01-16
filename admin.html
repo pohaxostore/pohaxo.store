@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Orders</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+    <h1>Manage Orders</h1>
+
+    <label for="order-id">Order ID:</label>
+    <input type="text" id="order-id" placeholder="Enter Order ID">
+
+    <label for="order-status">Order Status:</label>
+    <select id="order-status">
+        <option value="Pending">Pending</option>
+        <option value="Processing">Processing</option>
+        <option value="Shipped">Shipped</option>
+        <option value="Delivered">Delivered</option>
+    </select>
+
+    <button id="update-status-button">Update Status</button>
+
+    <script>
+        // استيراد مكتبة Supabase
+        const { createClient } = supabase;
+        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('update-status-button').addEventListener('click', async () => {
+            const orderId = document.getElementById('order-id').value;
+            const newStatus = document.getElementById('order-status').value;
+
+            const { data, error } = await supabase
+                .from('orders')
+                .update({ status: newStatus })
+                .eq('id', orderId);
+
+            if (error) {
+                alert('Error updating status: ' + error.message);
+            } else {
+                alert('Order status updated successfully!');
+            }
+        });
+    </script>
+</body>
+</html>
