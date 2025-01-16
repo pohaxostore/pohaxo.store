@@ -293,6 +293,143 @@ footer {
 .track-btn:hover {
     background-color: #0056b3; /* لون أزرق أغمق عند التمرير */
 }
+<style>
+        /* تصميم الصفحة الرئيسية */
+        .track-order-container {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .track-order-container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .track-order-container input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .track-order-container button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .track-order-container button:hover {
+            background-color: #0056b3;
+        }
+
+        /* تصميم شريط الحالة */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .status-bar::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 4px;
+            background: #ddd;
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .status-point {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .status-point.active {
+            background-color: #000; /* أسود */
+        }
+
+        .status-point.processing {
+            background-color: #007BFF; /* أزرق */
+        }
+
+        .status-point.completed {
+            background-color: #28a745; /* أخضر */
+        }
+
+        .status-point span {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #555;
+        }
+
+        .status-point.active span {
+            color: #000;
+        }
+
+        .status-point.processing span {
+            color: #007BFF;
+        }
+
+        .status-point.completed span {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="track-order-container">
+        <h1>Track Your Order</h1>
+        <p>Enter your order number to check the status:</p>
+        <input type="text" placeholder="Enter Order Number" id="order-number">
+        <button onclick="trackOrder()">Track Order</button>
+
+        <!-- شريط الحالة -->
+        <div class="status-bar">
+            <div class="status-point active">
+                <span>Payment</span>
+            </div>
+            <div class="status-point processing">
+                <span>Order Sent</span>
+            </div>
+            <div class="status-point completed">
+                <span>Delivered</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Placeholder for tracking functionality
+        function trackOrder() {
+            const orderNumber = document.getElementById("order-number").value;
+            if (orderNumber.trim() === "") {
+                alert("Please enter a valid order number.");
+                return;
+            }
+            alert(`Tracking order: ${orderNumber}`);
+        }
+    </script>
+</body>
+</html>
 
 
 
