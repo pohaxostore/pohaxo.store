@@ -95,22 +95,23 @@
         const statusMessage = document.getElementById('status-message');
 
         if (error) {
-            console.error('Error details:', error);
-            statusMessage.innerText = `Error placing order: ${error.message}`;
-            statusMessage.style.color = 'red';
-            return;
-        } 
+    console.error('Error details:', error);
+    statusMessage.innerText = `Error placing order: ${error.message}`;
+    statusMessage.style.color = 'red';
+    return;
+} 
 
-        if (!data || data.length === 0) {
-            console.error('No data returned from Supabase.');
-            statusMessage.innerText = 'Unexpected error: No data returned from server.';
-            statusMessage.style.color = 'red';
-            return;
-        }
+if (!data || data.length === 0) {
+    console.error('No data returned from Supabase.');
+    statusMessage.innerText = 'Unexpected error: No data returned from server.';
+    statusMessage.style.color = 'red';
+    return;
+}
 
-        console.log('Order created:', data);
-        statusMessage.innerText = `Order placed successfully! Your Order ID is: ${data[0].id}`;
-        statusMessage.style.color = 'green';
+console.log('Order created:', data);
+statusMessage.innerText = `Order placed successfully! Your Order ID is: ${data[0].id}`;
+statusMessage.style.color = 'green';
+
 
         localStorage.removeItem('cart');
         statusDiv.style.display = 'block';
