@@ -115,11 +115,6 @@ statusMessage.style.color = 'green';
 
         localStorage.removeItem('cart');
         statusDiv.style.display = 'block';
-        const { data, error } = await supabase
-  .from('orders')
-  .insert([orderData])
-  .select(); // طلب البيانات المدخلة بعد الإدراج
-
     });
 </script>
 
