@@ -68,58 +68,59 @@
     const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
     const supabase = createClient(supabaseUrl, supabaseKey);
+document.getElementById('checkout-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-    document.getElementById('checkout-form').addEventListener('submit', async (event) => {
-        event.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const size = document.getElementById('size').value;
+    const gender = document.getElementById('gender').value;
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-        const name = document.getElementById('name').value.trim();
-        const address = document.getElementById('address').value.trim();
-        const size = document.getElementById('size').value;
-        const gender = document.getElementById('gender').value;
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const orderData = {
+        name,
+        address,
+        size,
+        gender,
+        total_amount: totalAmount,
+        status: 'Order Placed',
+        created_at: new Date().toISOString(),
+    };
 
-        const orderData = {
-            name,
-            address,
-            size,
-            gender,
-            total_amount: totalAmount,
-            status: 'Order Placed',
-            created_at: new Date().toISOString(),
-        };
+    // إدراج البيانات واسترجاع العمود id فقط
+    const { data, error } = await supabase
+        .from('orders')
+        .insert([orderData])
+        .select('id'); // تحديد العمود id فقط
 
-        const { data, error } = await supabase.from('orders').insert([orderData]);
+    const statusDiv = document.getElementById('order-status');
+    const statusMessage = document.getElementById('status-message');
 
-        const statusDiv = document.getElementById('order-status');
-        const statusMessage = document.getElementById('status-message');
+    if (error) {
+        console.error('Error details:', error);
+        statusMessage.innerText = `Error placing order: ${error.message}`;
+        statusMessage.style.color = 'red';
+        return;
+    }
 
-        if (error) {
-    console.error('Error details:', error);
-    statusMessage.innerText = `Error placing order: ${error.message}`;
-    statusMessage.style.color = 'red';
-    return;
-} 
+    if (!data || data.length === 0) {
+        console.error('No data returned from Supabase.');
+        statusMessage.innerText = 'Unexpected error: No data returned from server.';
+        statusMessage.style.color = 'red';
+        return;
+    }
 
-if (!data || data.length === 0) {
-    console.error('No data returned from Supabase.');
-    statusMessage.innerText = 'Unexpected error: No data returned from server.';
-    statusMessage.style.color = 'red';
-    return;
-}
+    console.log('Order created:', data);
+    statusMessage.innerText = `Order placed successfully! Your Order ID is: ${data[0].id}`;
+    statusMessage.style.color = 'green';
 
-console.log('Order created:', data);
-statusMessage.innerText = `Order placed successfully! Your Order ID is: ${data[0].id}`;
-statusMessage.style.color = 'green';
+    // Clear cart
+    localStorage.removeItem('cart');
 
-
-        localStorage.removeItem('cart');
-        statusDiv.style.display = 'block';
-    });
-</script>
-
-
-    </script>
+    // Show the status message
+    statusDiv.style.display = 'block';
+});
 </body>
 </html>
 
