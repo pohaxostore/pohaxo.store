@@ -121,6 +121,27 @@
                 alert('Payment failed. Please try again.');
             }
         }).render('#paypal-button-container');
+        paypal.Buttons({
+    createOrder: function (data, actions) {
+        if (totalAmount <= 0) {
+            alert('Invalid total amount');
+            return;
+        }
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    value: totalAmount.toFixed(2)
+                }
+            }]
+        });
+    },
+    onApprove: function (data, actions) {
+        return actions.order.capture().then(function (orderData) {
+            console.log('Order Approved:', orderData);
+        });
+    }
+}).render('#paypal-button-container');
+
     </script>
 </body>
 </html>
