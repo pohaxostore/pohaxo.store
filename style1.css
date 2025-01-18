@@ -400,6 +400,30 @@ footer {
         .status-point.completed span {
             color: #28a745;
         }
+button {
+            background-color: #ff9900; /* لون الخلفية */
+            color: #fff; /* لون النص */
+            font-size: 1.2rem; /* حجم النص */
+            padding: 10px 20px; /* الحواف الداخلية */
+            border: none; /* إزالة الحدود */
+            border-radius: 5px; /* زوايا مستديرة */
+            cursor: pointer; /* تغيير المؤشر عند التمرير */
+            transition: transform 0.2s, box-shadow 0.2s; /* تأثير الانتقال */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* ظل خفيف */
+        }
+
+        /* عند التمرير على الزر */
+        button:hover {
+            background-color: #e68a00; /* لون مختلف عند التمرير */
+            transform: translateY(-2px); /* تأثير الرفع */
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* تكبير الظل */
+        }
+
+        /* عند الضغط على الزر */
+        button:active {
+            transform: translateY(1px); /* خفض الزر قليلاً */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* تقليل الظل */
+        }
     </style>
 </head>
 <body>
