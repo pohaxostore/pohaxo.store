@@ -20,8 +20,19 @@
     <main>
         <section class="checkout-section">
             <h2>Order Details</h2>
-            <form id="checkout-form">
-                <!-- Shipping Address -->
+            <form id="checkout-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                <!-- PayPal Business Email -->
+                <input type="hidden" name="business" value="10crimson.blade01@gmail.com">
+                <!-- Payment Details -->
+                <input type="hidden" name="cmd" value="_xclick">
+                <input type="hidden" name="item_name" value="Order from Pohaxo Store">
+                <input type="hidden" name="currency_code" value="USD">
+                <input type="hidden" name="amount" id="total-amount" value="">
+                <!-- Redirect URLs -->
+                <input type="hidden" name="return" value="http://yourwebsite.com/thank-you.html">
+                <input type="hidden" name="cancel_return" value="http://yourwebsite.com/cancel.html">
+
+                <!-- Form Inputs -->
                 <div class="form-group">
                     <label for="name">Full Name:</label>
                     <input type="text" id="name" name="name" required>
@@ -30,8 +41,6 @@
                     <label for="address">Shipping Address:</label>
                     <textarea id="address" name="address" rows="4" required></textarea>
                 </div>
-
-                <!-- Select Size -->
                 <div class="form-group">
                     <label for="size">Select Size:</label>
                     <select id="size" name="size" required>
@@ -41,8 +50,6 @@
                         <option value="XL">Extra Large (XL)</option>
                     </select>
                 </div>
-
-                <!-- Select Gender -->
                 <div class="form-group">
                     <label for="gender">Select Gender:</label>
                     <select id="gender" name="gender" required>
@@ -50,9 +57,7 @@
                         <option value="Female">Female</option>
                     </select>
                 </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="submit-btn">Submit Order</button>
+                <div id="paypal-button-container"></div>
             </form>
             <div id="order-status" style="margin-top: 20px; display: none;">
                 <p id="status-message" style="color: green; font-weight: bold;"></p>
@@ -62,67 +67,92 @@
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
-<script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-document.getElementById('checkout-form').addEventListener('submit', async (event) => {
-    event.preventDefault();
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const name = document.getElementById('name').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const size = document.getElementById('size').value;
-    const gender = document.getElementById('gender').value;
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // Replace with your Supabase key
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const orderData = {
-        name,
-        address,
-        size,
-        gender,
-        total_amount: totalAmount,
-        status: 'Order Placed',
-        created_at: new Date().toISOString(),
-    };
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    // إدراج البيانات واسترجاع العمود id فقط
-    const { data, error } = await supabase
-        .from('orders')
-        .insert([orderData])
-        .select('id'); // تحديد العمود id فقط
+        // Update hidden field for total amount
+        document.getElementById('total-amount').value = totalAmount.toFixed(2);
 
-    const statusDiv = document.getElementById('order-status');
-    const statusMessage = document.getElementById('status-message');
+        // Render PayPal Button
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: totalAmount.toFixed(2) // Total amount in USD
+                        }
+                    }]
+                });
+            },
+            onApprove: async function(data, actions) {
+                const order = await actions.order.capture();
+                console.log('Payment successful!', order);
 
-    if (error) {
-        console.error('Error details:', error);
-        statusMessage.innerText = `Error placing order: ${error.message}`;
-        statusMessage.style.color = 'red';
-        return;
-    }
+                // Save order to database
+                const name = document.getElementById('name').value.trim();
+                const address = document.getElementById('address').value.trim();
+                const size = document.getElementById('size').value;
+                const gender = document.getElementById('gender').value;
 
-    if (!data || data.length === 0) {
-        console.error('No data returned from Supabase.');
-        statusMessage.innerText = 'Unexpected error: No data returned from server.';
-        statusMessage.style.color = 'red';
-        return;
-    }
+                const orderData = {
+                    name,
+                    address,
+                    size,
+                    gender,
+                    total_amount: totalAmount,
+                    status: 'Paid',
+                    created_at: new Date().toISOString(),
+                    paypal_order_id: order.id, // PayPal order ID
+                };
 
-    console.log('Order created:', data);
-    statusMessage.innerText = `Order placed successfully! Your Order ID is: ${data[0].id}`;
-    statusMessage.style.color = 'green';
+                const { data, error } = await supabase
+                    .from('orders')
+                    .insert([orderData])
+                    .select('id');
 
-    // Clear cart
-    localStorage.removeItem('cart');
+                const statusDiv = document.getElementById('order-status');
+                const statusMessage = document.getElementById('status-message');
 
-    // Show the status message
-    statusDiv.style.display = 'block';
-});
+                if (error) {
+                    console.error('Error details:', error);
+                    statusMessage.innerText = `Error saving order: ${error.message}`;
+                    statusMessage.style.color = 'red';
+                    statusDiv.style.display = 'block';
+                    return;
+                }
+
+                if (data && data.length > 0) {
+                    console.log('Order saved successfully:', data);
+                    statusMessage.innerText = `Order placed successfully! Your Order ID is: ${data[0].id}`;
+                    statusMessage.style.color = 'green';
+
+                    // Clear cart
+                    localStorage.removeItem('cart');
+                }
+
+                statusDiv.style.display = 'block';
+            },
+            onError: function(err) {
+                console.error('PayPal error:', err);
+                const statusDiv = document.getElementById('order-status');
+                const statusMessage = document.getElementById('status-message');
+                statusMessage.innerText = 'Payment failed. Please try again.';
+                statusMessage.style.color = 'red';
+                statusDiv.style.display = 'block';
+            }
+        }).render('#paypal-button-container');
+    </script>
 </body>
 </html>
+
 
 
 
