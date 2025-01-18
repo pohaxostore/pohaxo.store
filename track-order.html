@@ -29,20 +29,25 @@
                 <h3>Order Status:</h3>
                 <p id="status-text"></p>
             </div>
+            <div id="order-id-container" style="display:none;">
+                <h3>Your Order ID:</h3>
+                <p id="order-id-display"></p>
+                <button id="copy-button">Copy Order ID</button>
+            </div>
         </section>
     </main>
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-    // الآن يمكن تهيئة العميل بعد تحميل المكتبة
-    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // استبدل هذا بالمفتاح الفعلي
-   const supabase = window['supabase'].createClient(supabaseUrl, supabaseKey);
-</script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        // Initialize Supabase client
+        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Track order
         document.getElementById('track-button').addEventListener('click', async (event) => {
             event.preventDefault();
             const orderId = document.getElementById('order-id').value;
@@ -54,26 +59,28 @@
                 .eq('id', orderId)
                 .single();
 
-            if (error) {
-                alert('Error fetching order status: ' + error.message);
+            if (error || !data) {
+                document.getElementById('order-status').style.display = 'block';
+                document.getElementById('status-text').innerText = 'Order not found or an error occurred.';
             } else {
                 document.getElementById('order-status').style.display = 'block';
-                document.getElementById('status-text').innerText = data ? `Order Status: ${data.status}` : 'Order not found.';
+                document.getElementById('status-text').innerText = `Order Status: ${data.status}`;
             }
         });
+
+        // Handle URL parameter for order ID
         const urlParams = new URLSearchParams(window.location.search);
-const orderId = urlParams.get('orderId');
+        const orderId = urlParams.get('orderId');
 
-if (orderId) {
-    document.getElementById('order-id-display').innerText = orderId;
+        if (orderId) {
+            document.getElementById('order-id-container').style.display = 'block';
+            document.getElementById('order-id-display').innerText = orderId;
 
-    document.getElementById('copy-button').addEventListener('click', () => {
-        navigator.clipboard.writeText(orderId)
-            .then(() => alert('Order ID copied to clipboard!'))
-            .catch(err => alert('Failed to copy Order ID.'));
-    });
-}
-    </script>
-    
-</body>
-</html>
+            document.getElementById('copy-button').addEventListener('click', () => {
+                navigator.clipboard.writeText(orderId)
+                    .then(() => alert('Order ID copied to clipboard!'))
+                    .catch(err => alert('Failed to copy Order ID.'));
+            });
+        }
+    <
+
