@@ -77,88 +77,80 @@
         // Set the total amount in the form
         document.getElementById('total-amount').value = totalAmount.toFixed(2);
     </script>
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // Replace with your Supabase key
-        const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // Replace with your Supabase key
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-        // Update hidden field for total amount
-        document.getElementById('total-amount').value = totalAmount.toFixed(2);
+    // Update hidden field for total amount
+    document.getElementById('total-amount').value = totalAmount.toFixed(2);
 
-        // Render PayPal Button
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: totalAmount.toFixed(2) // Total amount in USD
-                        }
-                    }]
-                });
-            },
-            onApprove: async function(data, actions) {
-                const order = await actions.order.capture();
-                console.log('Payment successful!', order);
+    // Render PayPal Button
+    paypal.Buttons({
+        createOrder: function (data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: totalAmount.toFixed(2) // Total amount in USD
+                    }
+                }]
+            });
+        },
+        onApprove: async function (data, actions) {
+            const order = await actions.order.capture();
+            console.log('Payment successful!', order);
 
-                // Save order to database
-                const name = document.getElementById('name').value.trim();
-                const address = document.getElementById('address').value.trim();
-                const size = document.getElementById('size').value;
-                const gender = document.getElementById('gender').value;
+            // Save order to database
+            const name = document.getElementById('name').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const size = document.getElementById('size').value;
+            const gender = document.getElementById('gender').value;
 
-                const orderData = {
-                    name,
-                    address,
-                    size,
-                    gender,
-                    total_amount: totalAmount,
-                    status: 'Paid',
-                    created_at: new Date().toISOString(),
-                    paypal_order_id: order.id, // PayPal order ID
-                };
+            const orderData = {
+                name,
+                address,
+                size,
+                gender,
+                total_amount: totalAmount,
+                status: 'Paid',
+                created_at: new Date().toISOString(),
+                paypal_order_id: order.id, // PayPal order ID
+            };
 
-                const { data, error } = await supabase
-                    .from('orders')
-                    .insert([orderData])
-                    .select('id');
+            const { data, error } = await supabase
+                .from('orders')
+                .insert([orderData])
+                .select('id');
 
-                const statusDiv = document.getElementById('order-status');
-                const statusMessage = document.getElementById('status-message');
-
-                if (error) {
-                    console.error('Error details:', error);
-                    statusMessage.innerText = `Error saving order: ${error.message}`;
-                    statusMessage.style.color = 'red';
-                    statusDiv.style.display = 'block';
-                    return;
-                }
-
-                if (data && data.length > 0) {
-                    console.log('Order saved successfully:', data);
-                    statusMessage.innerText = `Order placed successfully! Your Order ID is: ${data[0].id}`;
-                    statusMessage.style.color = 'green';
-
-                    // Clear cart
-                    localStorage.removeItem('cart');
-                }
-
-                statusDiv.style.display = 'block';
-            },
-            onError: function(err) {
-                console.error('PayPal error:', err);
-                const statusDiv = document.getElementById('order-status');
-                const statusMessage = document.getElementById('status-message');
-                statusMessage.innerText = 'Payment failed. Please try again.';
-                statusMessage.style.color = 'red';
-                statusDiv.style.display = 'block';
+            if (error) {
+                console.error('Error details:', error);
+                alert(`Error saving order: ${error.message}`);
+                return;
             }
-        }).render('#paypal-button-container');
-    </script>
+
+            if (data && data.length > 0) {
+                const orderId = data[0].id;
+                console.log('Order saved successfully:', data);
+
+                // Clear cart
+                localStorage.removeItem('cart');
+
+                // Redirect to track-order page with Order ID
+                window.location.href = `track-order.html?orderId=${orderId}`;
+            }
+        },
+        onError: function (err) {
+            console.error('PayPal error:', err);
+            alert('Payment failed. Please try again.');
+        }
+    }).render('#paypal-button-container');
+</script>
+
 </body>
 </html>
 
