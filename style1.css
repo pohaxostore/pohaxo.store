@@ -475,12 +475,12 @@ button {
 <div class="progress-container">
   <div class="step active">
       <div class="step-circle">1</div>
-      <div class="step-label">تم إرسال الطلب</div>
+      <div class="step-label">Order Sent</div>
       <div class="step-line"></div>
   </div>
   <div class="step">
       <div class="step-circle">2</div>
-      <div class="step-label">تم توصيل الطلب</div>
+      <div class="step-label">Order Successfully Delivered</div>
   </div>
 </div>
 
