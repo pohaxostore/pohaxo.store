@@ -4,8 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order</title>
-    <link rel="stylesheet" href="style1.css">
+    <link rel="stylesheet" href="style2.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        // تأكد من تهيئة Supabase قبل الاستخدام
+        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        console.log('Supabase client initialized:', supabase);
+    </script>
 </head>
 <body>
     <header>
@@ -41,13 +48,6 @@
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
     <script>
-        // تهيئة Supabase
-        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-        console.log('Supabase client initialized:', supabase);
-
-        // Track order
         document.getElementById('track-form').addEventListener('submit', async (event) => {
             event.preventDefault();
             const orderId = document.getElementById('order-id').value;
@@ -91,6 +91,7 @@
     </script>
 </body>
 </html>
+
 
 
     
