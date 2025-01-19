@@ -6,72 +6,95 @@
     <title>Track Your Order</title>
     <link rel="stylesheet" href="style1.css">
     <style>
-     /* تصميم الشريط التقدمي */
-.progress-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 20px 0;
-    position: relative;
-    height: 10px;
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 5px;
-    overflow: hidden;
-}
+        /* تصميم الشريط التقدمي */
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            height: 10px;
+            width: 80%;
+            margin: 20px auto;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
 
-/* الشريط الأخضر */
-.progress-bar .fill {
-    height: 100%;
-    background-color: #4caf50;
-    transition: width 0.3s ease-in-out;
-    width: 0%; /* ستتغير ديناميكيًا */
-}
+        /* الشريط الأخضر */
+        .progress-bar .fill {
+            height: 100%;
+            background-color: #4caf50;
+            transition: width 0.5s ease-in-out;
+            width: 0%; /* يتحرك ديناميكيًا */
+        }
 
-/* النقاط */
-.step {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background-color: white;
-    border: 3px solid #4caf50;
-    border-radius: 50%;
-    z-index: 2;
-}
+        /* النقاط */
+        .progress-bar .step {
+            position: absolute;
+            top: -10px;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-color: #e0e0e0;
+            border: 3px solid #4caf50;
+            border-radius: 50%;
+            z-index: 2;
+        }
 
-/* نقطة خاصة */
-.step.active {
-    background-color: #4caf50;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
-}
+        /* النقطة الأولى */
+        .progress-bar .step:nth-child(1) {
+            left: 0;
+        }
 
-/* الكتابة تحت الشريط */
-#status-text {
-    margin-top: 20px;
-    font-size: 1.2em;
-    text-align: center;
-    animation: fadeIn 0.5s ease-in-out;
-}
+        /* النقطة الثانية */
+        .progress-bar .step:nth-child(2) {
+            right: 0;
+        }
 
-/* تأثير الكتابة */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        /* حالة النشطة للنقاط */
+        .progress-bar .step.active {
+            background-color: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
 
+        /* تسميات النقاط */
+        .progress-bar .step-label {
+            position: absolute;
+            top: 30px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .progress-bar .step-label:nth-child(1) {
+            left: 0;
+        }
+
+        .progress-bar .step-label:nth-child(2) {
+            right: 0;
+        }
+
+        /* تأثير الكتابة */
+        #status-text {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -84,14 +107,13 @@
             <button type="submit" id="track-button">Track Order</button>
         </form>
 
-        <!-- الشريط -->
+        <!-- الشريط التقدمي -->
         <div class="progress-bar">
-            <div class="step active">
-                <span class="label">Order Sent</span>
-            </div>
-            <div class="step">
-                <span class="label">Order Delivered</span>
-            </div>
+            <div class="fill"></div>
+            <div class="step"></div>
+            <div class="step"></div>
+            <span class="step-label">Order Sent</span>
+            <span class="step-label">Order Delivered</span>
         </div>
 
         <div id="order-status" style="display:none;">
@@ -121,6 +143,7 @@
                     .single();
 
                 const statusText = document.getElementById('status-text');
+                const fill = document.querySelector('.fill');
                 const steps = document.querySelectorAll('.step');
 
                 if (error) {
@@ -131,15 +154,15 @@
                     statusText.innerText = `Order Status: ${data.status}`;
 
                     // تحديث الشريط بناءً على الحالة
-                    steps.forEach((step, index) => {
-                        if (data.status === 'Order Sent' && index === 0) {
-                            step.classList.add('active');
-                        } else if (data.status === 'Order Delivered' && index === 1) {
-                            step.classList.add('active');
-                        } else {
-                            step.classList.remove('active');
-                        }
-                    });
+                    if (data.status === 'Order Sent') {
+                        fill.style.width = '50%';
+                        steps[0].classList.add('active');
+                        steps[1].classList.remove('active');
+                    } else if (data.status === 'Order Delivered') {
+                        fill.style.width = '100%';
+                        steps[0].classList.add('active');
+                        steps[1].classList.add('active');
+                    }
                 }
 
                 document.getElementById('order-status').style.display = 'block';
@@ -150,6 +173,7 @@
     </script>
 </body>
 </html>
+
 
 
 
