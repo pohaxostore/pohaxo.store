@@ -4,55 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order</title>
+    <link rel="stylesheet" href="style1.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // تأكد من تهيئة Supabase قبل الاستخدام
+        // تهيئة مكتبة Supabase
         const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
         console.log('Supabase client initialized:', supabase);
     </script>
 </head>
 <body>
     <header>
         <h1>Track Your Order</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="cart.html">Cart</a></li>
-                <li><a href="track-order.html" class="active">Track Order</a></li>
-            </ul>
-        </nav>
     </header>
     <main>
-        <section class="track-order-section">
-            <h2>Enter Your Order ID</h2>
-            <form id="track-form">
-                <input type="text" id="order-id" placeholder="Enter your order ID" required>
-                <button type="submit" id="track-button">Track Order</button>
-            </form>
-            <div id="order-status" style="display:none;">
-                <h3>Order Status:</h3>
-                <p id="status-text"></p>
-            </div>
-            <div id="order-id-container" style="display:none;">
-                <h3>Your Order ID:</h3>
-                <p id="order-id-display"></p>
-                <button id="copy-button">Copy Order ID</button>
-            </div>
-        </section>
+        <form id="track-form">
+            <input type="text" id="order-id" placeholder="Enter your order ID" required>
+            <button type="submit" id="track-button">Track Order</button>
+        </form>
+        <div id="order-status" style="display:none;">
+            <p id="status-text"></p>
+        </div>
     </main>
-    <footer>
-        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
-    </footer>
     <script>
-        document.getElementById('track-form').addEventListener('submit', async (event) => {
+        // التعامل مع التتبع
+        document.getElementById('track-button').addEventListener('click', async (event) => {
             event.preventDefault();
             const orderId = document.getElementById('order-id').value;
 
             try {
-                // Fetch order status from Supabase
                 const { data, error } = await supabase
                     .from('orders')
                     .select('status')
@@ -60,36 +42,20 @@
                     .single();
 
                 if (error || !data) {
-                    document.getElementById('order-status').style.display = 'block';
                     document.getElementById('status-text').innerText = 'Order not found or an error occurred.';
                 } else {
-                    document.getElementById('order-status').style.display = 'block';
                     document.getElementById('status-text').innerText = `Order Status: ${data.status}`;
                 }
+                document.getElementById('order-status').style.display = 'block';
             } catch (err) {
                 console.error('Error fetching order status:', err);
-                document.getElementById('status-text').innerText = 'An unexpected error occurred.';
-                document.getElementById('order-status').style.display = 'block';
             }
         });
-
-        // Handle URL parameter for order ID
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('orderId');
-
-        if (orderId) {
-            document.getElementById('order-id-container').style.display = 'block';
-            document.getElementById('order-id-display').innerText = orderId;
-
-            document.getElementById('copy-button').addEventListener('click', () => {
-                navigator.clipboard.writeText(orderId)
-                    .then(() => alert('Order ID copied to clipboard!'))
-                    .catch(err => alert('Failed to copy Order ID.'));
-            });
-        }
     </script>
 </body>
 </html>
+
+     
 
 
 
