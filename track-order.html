@@ -5,6 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order</title>
     <link rel="stylesheet" href="style1.css">
+    <style>
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        .step::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background-color: #ccc;
+            z-index: -1;
+        }
+        .step:first-child::before {
+            left: 50%;
+        }
+        .step:last-child::before {
+            right: 50%;
+        }
+        .step span {
+            display: inline-block;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #333;
+        }
+        .step.active span {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -15,70 +57,73 @@
             <input type="text" id="order-id" placeholder="Enter your order ID" required>
             <button type="submit" id="track-button">Track Order</button>
         </form>
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
-            <div class="steps">
-                <div class="step" id="step-sent">Order Sent</div>
-                <div class="step" id="step-delivered">Order Delivered</div>
-            </div>
-        </div>
         <div id="order-status" style="display:none;">
+            <div class="progress-container">
+                <div class="step" id="step-sent">
+                    <span>Order Sent</span>
+                </div>
+                <div class="step" id="step-delivered">
+                    <span>Order Delivered</span>
+                </div>
+            </div>
             <p id="status-text"></p>
         </div>
     </main>
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
-<script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
-    function updateProgress(status) {
-        const progressBar = document.getElementById('progress-bar');
-        const stepSent = document.getElementById('step-sent');
-        const stepDelivered = document.getElementById('step-delivered');
+        document.getElementById('track-button').addEventListener('click', async (event) => {
+            event.preventDefault();
+            const orderId = document.getElementById('order-id').value;
 
-        if (status === 'Order Sent') {
-            progressBar.style.width = '50%';
-            stepSent.classList.add('completed');
-        } else if (status === 'Order Delivered') {
-            progressBar.style.width = '100%';
-            stepSent.classList.add('completed');
-            stepDelivered.classList.add('completed');
-        }
-    }
+            try {
+                const { data, error } = await supabase
+                    .from('orders')
+                    .select('status')
+                    .eq('id', orderId)
+                    .single();
 
-    document.getElementById('track-button').addEventListener('click', async (event) => {
-        event.preventDefault();
-        const orderId = document.getElementById('order-id').value;
-
-        try {
-            const { data, error } = await supabase
-                .from('orders')
-                .select('status')
-                .eq('id', orderId)
-                .single();
-
-            if (error) {
-                document.getElementById('status-text').innerText = 'Error occurred: ' + error.message;
-            } else if (!data) {
-                document.getElementById('status-text').innerText = 'Order not found.';
-            } else {
-                document.getElementById('status-text').innerText = `Order Status: ${data.status}`;
-                updateProgress(data.status);
+                if (error) {
+                    console.error('Error:', error);
+                    document.getElementById('status-text').innerText = 'Error occurred: ' + error.message;
+                } else if (!data) {
+                    document.getElementById('status-text').innerText = 'Order not found.';
+                } else {
+                    document.getElementById('status-text').innerText = `Order Status: ${data.status}`;
+                    updateProgressBar(data.status);
+                }
+                document.getElementById('order-status').style.display = 'block';
+            } catch (err) {
+                console.error('Unexpected Error:', err);
+                document.getElementById('status-text').innerText = 'Unexpected error occurred.';
             }
-            document.getElementById('order-status').style.display = 'block';
-        } catch (err) {
-            console.error('Unexpected Error:', err);
-            document.getElementById('status-text').innerText = 'Unexpected error occurred.';
+        });
+
+        function updateProgressBar(status) {
+            const sentStep = document.getElementById('step-sent');
+            const deliveredStep = document.getElementById('step-delivered');
+
+            sentStep.classList.remove('active');
+            deliveredStep.classList.remove('active');
+
+            if (status === 'Sent') {
+                sentStep.classList.add('active');
+            } else if (status === 'Delivered') {
+                sentStep.classList.add('active');
+                deliveredStep.classList.add('active');
+            }
         }
-    });
-</script>
+    </script>
 </body>
 </html>
+
 
 
      
