@@ -81,7 +81,7 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // Replace with your Supabase key
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH[...]';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -122,7 +122,7 @@
                 paypal_order_id: order.id, // PayPal order ID
             };
 
-            const { data, error } = await supabase
+            const { data: insertedData, error } = await supabase
                 .from('orders')
                 .insert([orderData])
                 .select('id');
@@ -133,9 +133,9 @@
                 return;
             }
 
-            if (data && data.length > 0) {
-                const orderId = data[0].id;
-                console.log('Order saved successfully:', data);
+            if (insertedData && insertedData.length > 0) {
+                const orderId = insertedData[0].id;
+                console.log('Order saved successfully:', insertedData);
 
                 // Clear cart
                 localStorage.removeItem('cart');
