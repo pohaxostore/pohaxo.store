@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order</title>
     <link rel="stylesheet" href="style1.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script>
-        // تهيئة مكتبة Supabase
-        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH[...]';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    </script>
 </head>
 <body>
     <header>
@@ -26,10 +19,12 @@
             <p id="status-text"></p>
         </div>
     </main>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Supabase client initialized:', supabase);
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
+    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // Replace with your Supabase key
+    const supabase = createClient(supabaseUrl, supabaseKey);
             document.getElementById('track-button').addEventListener('click', async (event) => {
                 event.preventDefault();
                 const orderId = document.getElementById('order-id').value;
