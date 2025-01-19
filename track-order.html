@@ -15,6 +15,13 @@
             <input type="text" id="order-id" placeholder="Enter your order ID" required>
             <button type="submit" id="track-button">Track Order</button>
         </form>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+            <div class="steps">
+                <div class="step" id="step-sent">Order Sent</div>
+                <div class="step" id="step-delivered">Order Delivered</div>
+            </div>
+        </div>
         <div id="order-status" style="display:none;">
             <p id="status-text"></p>
         </div>
@@ -26,8 +33,23 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
+    const supabaseKey = 'your-supabase-key-here';
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    function updateProgress(status) {
+        const progressBar = document.getElementById('progress-bar');
+        const stepSent = document.getElementById('step-sent');
+        const stepDelivered = document.getElementById('step-delivered');
+
+        if (status === 'Order Sent') {
+            progressBar.style.width = '50%';
+            stepSent.classList.add('completed');
+        } else if (status === 'Order Delivered') {
+            progressBar.style.width = '100%';
+            stepSent.classList.add('completed');
+            stepDelivered.classList.add('completed');
+        }
+    }
 
     document.getElementById('track-button').addEventListener('click', async (event) => {
         event.preventDefault();
@@ -41,12 +63,12 @@
                 .single();
 
             if (error) {
-                console.error('Error:', error);
                 document.getElementById('status-text').innerText = 'Error occurred: ' + error.message;
             } else if (!data) {
                 document.getElementById('status-text').innerText = 'Order not found.';
             } else {
                 document.getElementById('status-text').innerText = `Order Status: ${data.status}`;
+                updateProgress(data.status);
             }
             document.getElementById('order-status').style.display = 'block';
         } catch (err) {
@@ -55,10 +77,9 @@
         }
     });
 </script>
-
-    </script>
 </body>
 </html>
+
 
      
 
