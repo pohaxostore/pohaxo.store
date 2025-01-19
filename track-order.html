@@ -6,45 +6,64 @@
     <title>Track Your Order</title>
     <link rel="stylesheet" href="style1.css">
     <style>
-        .progress-container {
+        /* تصميم الشريط */
+        .progress-bar {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             margin: 20px 0;
-        }
-        .step {
-            flex: 1;
-            text-align: center;
             position: relative;
         }
-        .step::before {
+
+        .progress-bar::before {
             content: '';
             position: absolute;
             top: 50%;
-            left: 0;
-            right: 0;
+            left: 10%;
+            right: 10%;
             height: 5px;
-            background-color: #ccc;
-            z-index: -1;
+            background-color: lightgray;
+            transform: translateY(-50%);
+            z-index: 1;
         }
-        .step:first-child::before {
-            left: 50%;
-        }
-        .step:last-child::before {
-            right: 50%;
-        }
-        .step span {
-            display: inline-block;
-            padding: 10px;
-            border: 2px solid #ccc;
+
+        .step {
+            position: relative;
+            z-index: 2;
+            background-color: lightgray;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            background-color: #fff;
-            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .step.active span {
-            background-color: #4CAF50;
-            border-color: #4CAF50;
+
+        .step.active {
+            background-color: green;
             color: white;
+        }
+
+        .progress-bar .label {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* تأثير النص */
+        #status-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: black;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -57,21 +76,25 @@
             <input type="text" id="order-id" placeholder="Enter your order ID" required>
             <button type="submit" id="track-button">Track Order</button>
         </form>
-        <div id="order-status" style="display:none;">
-            <div class="progress-container">
-                <div class="step" id="step-sent">
-                    <span>Order Sent</span>
-                </div>
-                <div class="step" id="step-delivered">
-                    <span>Order Delivered</span>
-                </div>
+
+        <!-- الشريط -->
+        <div class="progress-bar">
+            <div class="step active">
+                <span class="label">Order Sent</span>
             </div>
+            <div class="step">
+                <span class="label">Order Delivered</span>
+            </div>
+        </div>
+
+        <div id="order-status" style="display:none;">
             <p id="status-text"></p>
         </div>
     </main>
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
+
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -90,39 +113,37 @@
                     .eq('id', orderId)
                     .single();
 
+                const statusText = document.getElementById('status-text');
+                const steps = document.querySelectorAll('.step');
+
                 if (error) {
-                    console.error('Error:', error);
-                    document.getElementById('status-text').innerText = 'Error occurred: ' + error.message;
+                    statusText.innerText = 'Error occurred: ' + error.message;
                 } else if (!data) {
-                    document.getElementById('status-text').innerText = 'Order not found.';
+                    statusText.innerText = 'Order not found.';
                 } else {
-                    document.getElementById('status-text').innerText = `Order Status: ${data.status}`;
-                    updateProgressBar(data.status);
+                    statusText.innerText = `Order Status: ${data.status}`;
+
+                    // تحديث الشريط بناءً على الحالة
+                    steps.forEach((step, index) => {
+                        if (data.status === 'Order Sent' && index === 0) {
+                            step.classList.add('active');
+                        } else if (data.status === 'Order Delivered' && index === 1) {
+                            step.classList.add('active');
+                        } else {
+                            step.classList.remove('active');
+                        }
+                    });
                 }
+
                 document.getElementById('order-status').style.display = 'block';
             } catch (err) {
-                console.error('Unexpected Error:', err);
                 document.getElementById('status-text').innerText = 'Unexpected error occurred.';
             }
         });
-
-        function updateProgressBar(status) {
-            const sentStep = document.getElementById('step-sent');
-            const deliveredStep = document.getElementById('step-delivered');
-
-            sentStep.classList.remove('active');
-            deliveredStep.classList.remove('active');
-
-            if (status === 'Sent') {
-                sentStep.classList.add('active');
-            } else if (status === 'Delivered') {
-                sentStep.classList.add('active');
-                deliveredStep.classList.add('active');
-            }
-        }
     </script>
 </body>
 </html>
+
 
 
 
