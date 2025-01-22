@@ -6,7 +6,6 @@
     <title>Track Your Order</title>
     <link rel="stylesheet" href="style1.css">
     <style>
-        /* تصميم الشريط التقدمي */
         .progress-bar {
             display: flex;
             align-items: center;
@@ -20,15 +19,13 @@
             overflow: hidden;
         }
 
-        /* الشريط الأخضر */
         .progress-bar .fill {
             height: 100%;
             background-color: #4caf50;
             transition: width 0.5s ease-in-out;
-            width: 0%; /* يتحرك ديناميكيًا */
+            width: 0%;
         }
 
-        /* النقاط */
         .progress-bar .step {
             position: absolute;
             top: -10px;
@@ -41,17 +38,9 @@
             z-index: 2;
         }
 
-        /* النقطة الأولى */
-        .progress-bar .step:nth-child(1) {
-            left: 0;
-        }
+        .progress-bar .step:nth-child(1) { left: 0; }
+        .progress-bar .step:nth-child(2) { right: 0; }
 
-        /* النقطة الثانية */
-        .progress-bar .step:nth-child(2) {
-            right: 0;
-        }
-
-        /* حالة النشطة للنقاط */
         .progress-bar .step.active {
             background-color: #4caf50;
             color: white;
@@ -61,7 +50,6 @@
             font-size: 10px;
         }
 
-        /* تسميات النقاط */
         .progress-bar .step-label {
             position: absolute;
             top: 30px;
@@ -69,15 +57,9 @@
             color: #333;
         }
 
-        .progress-bar .step-label:nth-child(1) {
-            left: 0;
-        }
+        .progress-bar .step-label:nth-child(1) { left: 0; }
+        .progress-bar .step-label:nth-child(2) { right: 0; }
 
-        .progress-bar .step-label:nth-child(2) {
-            right: 0;
-        }
-
-        /* تأثير الكتابة */
         #status-text {
             margin-top: 20px;
             font-size: 1.2em;
@@ -86,15 +68,11 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        .loading { font-size: 1em; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -107,7 +85,8 @@
             <button type="submit" id="track-button">Track Order</button>
         </form>
 
-        <!-- الشريط التقدمي -->
+        <div id="loading" class="loading" style="display: none;">Loading...</div>
+
         <div class="progress-bar">
             <div class="fill"></div>
             <div class="step"></div>
@@ -116,7 +95,7 @@
             <span class="step-label">Order Delivered</span>
         </div>
 
-        <div id="order-status" style="display:none;">
+        <div id="order-status" style="display: none;">
             <p id="status-text"></p>
         </div>
     </main>
@@ -131,9 +110,36 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        document.getElementById('track-button').addEventListener('click', async (event) => {
+        const trackForm = document.getElementById('track-form');
+        const loadingElement = document.getElementById('loading');
+        const statusText = document.getElementById('status-text');
+        const fill = document.querySelector('.fill');
+        const steps = document.querySelectorAll('.step');
+
+        const updateProgressBar = (status) => {
+            if (status === 'Order Sent') {
+                fill.style.width = '50%';
+                steps[0].classList.add('active');
+                steps[1].classList.remove('active');
+            } else if (status === 'Order Delivered') {
+                fill.style.width = '100%';
+                steps[0].classList.add('active');
+                steps[1].classList.add('active');
+            }
+        };
+
+        trackForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const orderId = document.getElementById('order-id').value;
+            const orderId = document.getElementById('order-id').value.trim();
+
+            if (!orderId) {
+                alert('Please enter a valid Order ID.');
+                return;
+            }
+
+            loadingElement.style.display = 'block';
+            statusText.innerText = '';
+            document.getElementById('order-status').style.display = 'none';
 
             try {
                 const { data, error } = await supabase
@@ -142,37 +148,27 @@
                     .eq('id', orderId)
                     .single();
 
-                const statusText = document.getElementById('status-text');
-                const fill = document.querySelector('.fill');
-                const steps = document.querySelectorAll('.step');
+                loadingElement.style.display = 'none';
 
                 if (error) {
-                    statusText.innerText = 'Error occurred: ' + error.message;
+                    statusText.innerText = `Error occurred: ${error.message}`;
                 } else if (!data) {
-                    statusText.innerText = 'Order not found.';
+                    statusText.innerText = 'Order not found. Please check your Order ID.';
                 } else {
                     statusText.innerText = `Order Status: ${data.status}`;
-
-                    // تحديث الشريط بناءً على الحالة
-                    if (data.status === 'Order Sent') {
-                        fill.style.width = '50%';
-                        steps[0].classList.add('active');
-                        steps[1].classList.remove('active');
-                    } else if (data.status === 'Order Delivered') {
-                        fill.style.width = '100%';
-                        steps[0].classList.add('active');
-                        steps[1].classList.add('active');
-                    }
+                    updateProgressBar(data.status);
                 }
 
                 document.getElementById('order-status').style.display = 'block';
             } catch (err) {
-                document.getElementById('status-text').innerText = 'Unexpected error occurred.';
+                loadingElement.style.display = 'none';
+                statusText.innerText = 'Unexpected error occurred. Please try again later.';
             }
         });
     </script>
 </body>
 </html>
+
 
 
 
