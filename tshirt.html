@@ -3,50 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-shirts Collection</title>
     <link rel="stylesheet" href="style3.css">
-    <title>T-Shirt Store</title>
 </head>
 <body>
     <header>
-        <h1>T-Shirt Store</h1>
-        <p>Find your perfect fit today!</p>
+        <h1> T-shirts Collection</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html" class="active">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
     </header>
-
     <main>
-        <div class="products-grid">
-            <!-- Product 1 -->
-            <div class="product-card">
-                <img src="https://via.placeholder.com/300x200" alt="T-shirt 1" class="product-image">
-                <div class="product-details">
-                    <p class="product-name">Basic T-Shirt</p>
-                    <p class="product-price">$15.99</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
+        <!-- تصنيف المنتجات -->
+        <section class="products">
+            <h2>Our Premium T-shirts</h2>
+            <div class="product-grid">
+                <!-- بطاقة المنتج -->
+                <article class="product-card">
+                    <img src="images/BALACRAVA.jpg" alt="Balaclava Zip">
+                    <div class="product-info">
+                        <h3>Balaclava Zip</h3>
+                        <p>Stylish hoodie with integrated face cover.</p>
+                        <p class="price">$0.1</p>
+                        <button class="add-to-cart" onclick="addToCart('Balaclava Zip', 0.1)">Add to Cart</button>
+                    </div>
+                </article>
+                <!-- منتج آخر -->
+                <article class="product-card">
+                    <img src="images/hoodie2.jpg" alt="Graphic Hoodie">
+                    <div class="product-info">
+                        <h3>Graphic Hoodie</h3>
+                        <p>Bold modern design for everyday wear.</p>
+                        <p class="price">$50.00</p>
+                        <button class="add-to-cart" onclick="addToCart('Graphic Hoodie', 50)">Add to Cart</button>
+                    </div>
+                </article>
+                <!-- المزيد من المنتجات -->
             </div>
-            <!-- Product 2 -->
-            <div class="product-card">
-                <img src="https://via.placeholder.com/300x200" alt="T-shirt 2" class="product-image">
-                <div class="product-details">
-                    <p class="product-name">Graphic T-Shirt</p>
-                    <p class="product-price">$19.99</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
-            </div>
-            <!-- Product 3 -->
-            <div class="product-card">
-                <img src="https://via.placeholder.com/300x200" alt="T-shirt 3" class="product-image">
-                <div class="product-details">
-                    <p class="product-name">Sports T-Shirt</p>
-                    <p class="product-price">$00.10</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
-            </div>
-            <!-- Add more products as needed -->
-        </div>
+        </section>
     </main>
-
     <footer>
-        <p>&copy; 2025 T-Shirt Store. All rights reserved.</p>
+        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function addToCart(productName, price) {
+            const existingProduct = cart.find(item => item.name === productName);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ name: productName, price: parseFloat(price), quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${productName} added to cart!`);
+        }
+    </script>
 </body>
 </html>
