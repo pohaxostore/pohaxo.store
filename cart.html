@@ -46,107 +46,101 @@
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
-<script>
-    // استرجاع السلة من localStorage
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-    // محاكاة قائمة المنتجات الحالية (مثال)
-    const products = [
-        { id: 1, name: "Product A", price: 10.5 },
-        { id: 2, name: "Product B", price: 0.1 },
-        { id: 3, name: "Product C", price: 25.99 }
-    ];
 
-    // دالة لضبط الدقة العشرية للسعر
-    function formatPrice(price) {
-        return parseFloat(price.toFixed(2));
-    }
+    <script>
+        // استرجاع السلة من localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // محاكاة قائمة المنتجات الحالية (مثال)
+        const products = [
+            { id: 1, name: "Product A", price: 10.5 },
+            { id: 2, name: "Product B", price: 0.1 },
+            { id: 3, name: "Product C", price: 25.99 }
+        ];
 
-    // دالة لمزامنة السلة مع المنتجات (تحديث الأسعار)
-    function syncCartWithProducts() {
-        cart = cart.map(item => {
-            const updatedProduct = products.find(product => product.id === item.id);
-            if (updatedProduct) {
-                console.log(`Updating product ${item.name}: Old Price = ${item.price}, New Price = ${updatedProduct.price}`);
-                item.price = updatedProduct.price; // تحديث السعر من قائمة المنتجات
-            } else {
-                console.warn(`Product not found for ID: ${item.id}`);
+        // دالة لضبط الدقة العشرية للسعر
+        function formatPrice(price) {
+            return parseFloat(price.toFixed(2));
+        }
+
+        // دالة لمزامنة السلة مع المنتجات (تحديث الأسعار)
+        function syncCartWithProducts() {
+            cart = cart.map(item => {
+                const updatedProduct = products.find(product => product.id === item.id);
+                if (updatedProduct) {
+                    item.price = updatedProduct.price; // تحديث السعر من قائمة المنتجات
+                }
+                return item;
+            });
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // تحديث السلة
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const totalPrice = document.getElementById('total-price');
+            cartItems.innerHTML = '';  // تنظيف السلة الحالية
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = formatPrice(item.price * item.quantity);
+                total += itemTotal;
+
+                cartItems.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${formatPrice(item.price)} USD</td>
+                        <td>
+                            <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">
+                        </td>
+                        <td>${itemTotal} USD</td>
+                        <td>
+                            <button onclick="removeItem(${index})">Remove</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            totalPrice.innerText = `${formatPrice(total)} USD`;
+        }
+
+        // دالة لتحديث كمية المنتج
+        function updateQuantity(index, quantity) {
+            cart[index].quantity = parseInt(quantity);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        // دالة لحذف المنتج من السلة
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        // دالة لإتمام الدفع
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Your cart is empty. Add products before proceeding to checkout.");
+                return;
             }
-            return item;
-        });
-        localStorage.setItem('cart', JSON.stringify(cart));
-        console.log("Synchronized cart:", cart);
-    }
 
-    // تحديث السلة
-    function updateCart() {
-        const cartItems = document.getElementById('cart-items');
-        const totalPrice = document.getElementById('total-price');
-        cartItems.innerHTML = '';  // تنظيف السلة الحالية
-        let total = 0;
-
-        cart.forEach((item, index) => {
-            const itemTotal = formatPrice(item.price * item.quantity);
-            total += itemTotal;
-
-            cartItems.innerHTML += `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>${formatPrice(item.price)} USD</td>
-                    <td>
-                        <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">
-                    </td>
-                    <td>${itemTotal} USD</td>
-                    <td>
-                        <button onclick="removeItem(${index})">Remove</button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        totalPrice.innerText = `${formatPrice(total)} USD`;
-        console.log("Updated cart displayed with total price:", total);
-    }
-
-    // دالة لتحديث كمية المنتج
-    function updateQuantity(index, quantity) {
-        cart[index].quantity = parseInt(quantity);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCart();
-    }
-
-    // دالة لحذف المنتج من السلة
-    function removeItem(index) {
-        console.log(`Removing product from cart:`, cart[index]);
-        cart.splice(index, 1);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCart();
-    }
-
-    // دالة لإتمام الدفع
-    function checkout() {
-        if (cart.length === 0) {
-            alert("Your cart is empty. Add products before proceeding to checkout.");
-            return;
+            const confirmation = confirm("Do you want to proceed to checkout?");
+            if (confirmation) {
+                // Redirect to checkout.html
+                window.location.href = "checkout.html";
+            }
         }
 
-        const confirmation = confirm("Do you want to proceed to checkout?");
-        if (confirmation) {
-            // Redirect to checkout.html
-            window.location.href = "checkout.html";
-        }
-    }
-
-    // التحقق من الأسعار وتحديثها عند تحميل الصفحة
-    window.onload = () => {
-        console.log("Original cart data from localStorage:", cart);
-        syncCartWithProducts(); // تحديث الأسعار
-        updateCart(); // عرض السلة
-    };
-</script>
-
+        // التحقق من الأسعار وتحديثها عند تحميل الصفحة
+        window.onload = () => {
+            syncCartWithProducts(); // تحديث الأسعار
+            updateCart(); // عرض السلة
+        };
+    </script>
 </body>
 </html>
+
 
 
 
