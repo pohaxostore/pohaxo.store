@@ -137,6 +137,20 @@
             margin-top: 20px;
             font-size: 14px;
         }
+        .track-btn {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.track-btn:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
     </style>
 </head>
 <body>
@@ -171,6 +185,7 @@
             </table>
             <h3>Total: <span id="total-price">0.00 USD</span></h3>
             <button class="checkout-btn" onclick="checkout()">Checkout</button>
+              <a href="track-order.html" class="track-btn">Track Order</a>
         </section>
     </main>
 
