@@ -32,7 +32,7 @@
                     </tr>
                 </thead>
                 <tbody id="cart-items">
-                    <!-- Cart items will be dynamically rendered here -->
+                    <!-- سيتم تحديث السلة هنا باستخدام JavaScript -->
                 </tbody>
             </table>
             <div class="cart-summary">
@@ -48,33 +48,52 @@
     </footer>
 
     <script>
-        // Retrieve cart from localStorage or initialize an empty array
+        // استرجاع السلة من localStorage
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // محاكاة قائمة المنتجات الحالية (مثال)
+        const products = [
+            { id: 1, name: "Product A", price: 10.5 },
+            { id: 2, name: "Product B", price: 0.1 },
+            { id: 3, name: "Product C", price: 25.99 }
+        ];
 
-        // Update cart display
+        // دالة لضبط الدقة العشرية للسعر
+        function formatPrice(price) {
+            return parseFloat(price.toFixed(2));
+        }
+
+        // دالة لمزامنة السلة مع المنتجات (تحديث الأسعار)
+        function syncCartWithProducts() {
+            cart = cart.map(item => {
+                const updatedProduct = products.find(product => product.id === item.id);
+                if (updatedProduct) {
+                    item.price = updatedProduct.price; // تحديث السعر من قائمة المنتجات
+                }
+                return item;
+            });
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // تحديث السلة
         function updateCart() {
             const cartItems = document.getElementById('cart-items');
             const totalPrice = document.getElementById('total-price');
-            cartItems.innerHTML = '';  // Clear the current cart display
+            cartItems.innerHTML = '';  // تنظيف السلة الحالية
             let total = 0;
 
-            // Render each cart item
             cart.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
+                const itemTotal = formatPrice(item.price * item.quantity);
                 total += itemTotal;
 
                 cartItems.innerHTML += `
                     <tr>
                         <td>${item.name}</td>
-                        <td>${item.price.toFixed(2)} USD</td>
+                        <td>${formatPrice(item.price)} USD</td>
                         <td>
-                            <input 
-                                type="number" 
-                                value="${item.quantity}" 
-                                min="1" 
-                                onchange="updateQuantity(${index}, this.value)">
+                            <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">
                         </td>
-                        <td>${itemTotal.toFixed(2)} USD</td>
+                        <td>${itemTotal} USD</td>
                         <td>
                             <button onclick="removeItem(${index})">Remove</button>
                         </td>
@@ -82,32 +101,24 @@
                 `;
             });
 
-            // Update total price
-            totalPrice.innerText = `${total.toFixed(2)} USD`;
-
-            // Save updated cart to localStorage
-            localStorage.setItem('cart', JSON.stringify(cart));
+            totalPrice.innerText = `${formatPrice(total)} USD`;
         }
 
-        // Update item quantity
+        // دالة لتحديث كمية المنتج
         function updateQuantity(index, quantity) {
-            const parsedQuantity = parseInt(quantity);
-            if (parsedQuantity < 1 || isNaN(parsedQuantity)) {
-                alert("Quantity must be at least 1.");
-                return;
-            }
-            cart[index].quantity = parsedQuantity;
+            cart[index].quantity = parseInt(quantity);
+            localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
 
-        // Remove item from cart
+        // دالة لحذف المنتج من السلة
         function removeItem(index) {
-            cart.splice(index, 1);  // Remove item from the array
-            updateCart();  // Update cart display and save to localStorage
-            alert("Item removed from the cart.");
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
         }
 
-        // Checkout function
+        // دالة لإتمام الدفع
         function checkout() {
             if (cart.length === 0) {
                 alert("Your cart is empty. Add products before proceeding to checkout.");
@@ -116,17 +127,20 @@
 
             const confirmation = confirm("Do you want to proceed to checkout?");
             if (confirmation) {
-                // Simulate checkout process (redirect or API call)
-                alert("Redirecting to checkout...");
+                // Redirect to checkout.html
                 window.location.href = "checkout.html";
             }
         }
 
-        // Initialize cart display on page load
-        window.onload = updateCart;
+        // التحقق من الأسعار وتحديثها عند تحميل الصفحة
+        window.onload = () => {
+            syncCartWithProducts(); // تحديث الأسعار
+            updateCart(); // عرض السلة
+        };
     </script>
 </body>
 </html>
+
 
 
 
