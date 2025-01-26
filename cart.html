@@ -138,19 +138,18 @@
             font-size: 14px;
         }
         .track-btn {
-    display: inline-block;
-    margin-top: 10px;
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
+            display: inline-block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
 
-.track-btn:hover {
-    color: #0056b3;
-    text-decoration: underline;
-}
-
+        .track-btn:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -169,7 +168,7 @@
     <main>
         <section class="cart-section">
             <h2>Items in Your Cart</h2>
-            <table>
+            <table class="cart-table">
                 <thead>
                     <tr>
                         <th>Product</th>
@@ -183,9 +182,11 @@
                     <!-- Items will be dynamically populated -->
                 </tbody>
             </table>
-            <h3>Total: <span id="total-price">0.00 USD</span></h3>
-            <button class="checkout-btn" onclick="checkout()">Checkout</button>
-              <a href="track-order.html" class="track-btn">Track Order</a>
+            <div class="cart-summary">
+                <h3>Total: <span id="total-price">0.00 USD</span></h3>
+                <button class="checkout-btn" onclick="checkout()">Checkout</button>
+                <a href="track-order.html" class="track-btn">Track Order</a>
+            </div>
         </section>
     </main>
 
@@ -252,6 +253,7 @@
     </script>
 </body>
 </html>
+
 
 
 
