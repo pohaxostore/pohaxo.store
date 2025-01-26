@@ -185,6 +185,10 @@
             <div class="cart-summary">
                 <h3>Total: <span id="total-price">0.00 USD</span></h3>
                 <button class="checkout-btn" onclick="checkout()">Checkout</button>
+                function checkout() {
+    // توجيه المستخدم إلى صفحة الدفع
+    window.location.href = 'checkout.html';
+}
                 <a href="track-order.html" class="track-btn">Track Order</a>
             </div>
         </section>
