@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart</title>
     <style>
-        /* تنسيقات الصفحة */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -16,20 +15,16 @@
         header {
             background-color: #343a40;
             color: white;
-            padding: 1em 0;
+            padding: 1em;
             text-align: center;
-        }
-
-        header h1 {
-            margin: 0;
         }
 
         nav ul {
             list-style: none;
-            padding: 0;
-            margin: 0;
             display: flex;
             justify-content: center;
+            padding: 0;
+            margin: 0;
             background-color: #495057;
         }
 
@@ -41,62 +36,79 @@
             color: white;
             text-decoration: none;
             font-weight: bold;
-            padding: 5px 10px;
         }
 
         nav ul li a.active, nav ul li a:hover {
             background-color: #6c757d;
             border-radius: 5px;
+            padding: 5px 10px;
         }
 
         .cart-section {
-            padding: 20px;
             max-width: 800px;
-            margin: auto;
+            margin: 20px auto;
             background-color: white;
             border-radius: 10px;
+            padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .cart-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
         }
 
-        .cart-table th, .cart-table td {
-            text-align: center;
+        th, td {
             padding: 10px;
+            text-align: center;
             border-bottom: 1px solid #ddd;
         }
 
-        .cart-table tr:nth-child(even) {
+        th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        tr:nth-child(even) {
             background-color: #f2f2f2;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         .checkout-btn {
             background-color: #28a745;
             color: white;
-            padding: 10px 20px;
             border: none;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
+            display: inline-block;
+            margin: 10px 0;
         }
 
         .checkout-btn:hover {
             background-color: #218838;
         }
 
-        .track-btn {
-            text-decoration: none;
-            color: #007bff;
-            margin-top: 10px;
-            display: inline-block;
+        .remove-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
         }
 
-        .track-btn:hover {
-            text-decoration: underline;
+        .remove-btn:hover {
+            background-color: #c82333;
         }
 
         footer {
@@ -122,10 +134,11 @@
             </ul>
         </nav>
     </header>
+
     <main>
         <section class="cart-section">
             <h2>Items in Your Cart</h2>
-            <table class="cart-table">
+            <table>
                 <thead>
                     <tr>
                         <th>Product</th>
@@ -136,40 +149,34 @@
                     </tr>
                 </thead>
                 <tbody id="cart-items">
-                    <!-- سيتم تحديث السلة هنا باستخدام JavaScript -->
+                    <!-- Items will be dynamically populated -->
                 </tbody>
             </table>
-            <div class="cart-summary">
-                <h3>Total Price: <span id="total-price">0.00 USD</span></h3>
-                <button class="checkout-btn" onclick="checkout()">Checkout</button>
-                <br><br>
-                <a href="track-order.html" class="track-btn">Track Your Orders</a>
-            </div>
+            <h3>Total: <span id="total-price">0.00 USD</span></h3>
+            <button class="checkout-btn" onclick="checkout()">Checkout</button>
         </section>
     </main>
+
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
 
     <script>
-        // استرجاع السلة من localStorage
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        // دالة لتنسيق السعر بالفاصلة
         function formatPrice(price) {
-            return parseFloat(price.toFixed(2)).toLocaleString("en-US", { minimumFractionDigits: 2 });
+            return parseFloat(price).toFixed(2);
         }
 
-        // تحديث السلة
         function updateCart() {
             const cartItems = document.getElementById('cart-items');
-            const totalPrice = document.getElementById('total-price');
-            cartItems.innerHTML = '';  // تنظيف السلة الحالية
+            const totalPriceElement = document.getElementById('total-price');
+            cartItems.innerHTML = '';
             let total = 0;
 
             cart.forEach((item, index) => {
-                const itemTotal = parseFloat(item.price * item.quantity).toFixed(2);
-                total += parseFloat(itemTotal);
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
 
                 cartItems.innerHTML += `
                     <tr>
@@ -180,49 +187,40 @@
                         </td>
                         <td>${formatPrice(itemTotal)} USD</td>
                         <td>
-                            <button onclick="removeItem(${index})">Remove</button>
+                            <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
                         </td>
                     </tr>
                 `;
             });
 
-            totalPrice.innerText = `${formatPrice(total)} USD`;
+            totalPriceElement.textContent = `${formatPrice(total)} USD`;
         }
 
-        // دالة لتحديث كمية المنتج
         function updateQuantity(index, quantity) {
-            cart[index].quantity = parseInt(quantity);
+            cart[index].quantity = Math.max(1, parseInt(quantity));
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
 
-        // دالة لحذف المنتج من السلة
         function removeItem(index) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
 
-        // دالة لإتمام الدفع
         function checkout() {
             if (cart.length === 0) {
-                alert("Your cart is empty. Add products before proceeding to checkout.");
+                alert("Your cart is empty!");
                 return;
             }
-
-            const confirmation = confirm("Do you want to proceed to checkout?");
-            if (confirmation) {
-                window.location.href = "checkout.html";
-            }
+            alert("Proceeding to checkout...");
         }
 
-        // عند تحميل الصفحة
-        window.onload = () => {
-            updateCart(); // عرض السلة
-        };
+        document.addEventListener('DOMContentLoaded', updateCart);
     </script>
 </body>
 </html>
+
 
 
 
