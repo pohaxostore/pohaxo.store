@@ -58,94 +58,124 @@
     <!-- Load PayPal JavaScript SDK -->
     <script src="https://www.paypal.com/sdk/js?client-id=AQOy865ool-s4lbnULnkXAs0hrCfBYaLV-P87ZK3VqckJLejTayI7gdkxz6liI7wRF0inhmQ9Ph4A4yH&currency=USD"></script>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+ <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
 
-        // Supabase initialization
-        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // استبدل بـ API Key الخاص بك
-        const supabase = createClient(supabaseUrl, supabaseKey);
+    // Supabase initialization
+    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // استبدل بـ API Key الخاص بك
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-        // Calculate total amount
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    // Calculate total amount
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-        if (!totalAmount) {
-            alert('Your cart is empty! Please add items to proceed.');
-            window.location.href = 'cart.html';
-        }
-
-        // Render PayPal Button
-        paypal.Buttons({
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: totalAmount.toFixed(2), // Total amount in USD
-                        },
-                        payee: {
-                            email_address: "10crimson.blade01@gmail.com", // استبدل بـ بريد PayPal الخاص بك
-                        },
-                    }],
-                });
-            },
-            onApprove: async function (data, actions) {
-    const order = await actions.order.capture();
-    console.log('Payment successful!', order);
-
-    // جمع تفاصيل الطلب
-    const name = document.getElementById('name').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const size = document.getElementById('size').value;
-    const gender = document.getElementById('gender').value;
-
-    if (!name || !address || !size || !gender) {
-        alert('Please fill in all the fields before proceeding.');
-        return;
+    if (!totalAmount) {
+        alert('Your cart is empty! Please add items to proceed.');
+        window.location.href = 'cart.html';
     }
 
-    const orderData = {
-        name,
-        address,
-        size,
-        gender,
-        total_amount: totalAmount,
-        status: 'Paid',
-        created_at: new Date().toISOString(),
-        paypal_order_id: order.id, // PayPal order ID
-    };
+    // Render PayPal Button
+    paypal.Buttons({
+        createOrder: function (data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: totalAmount.toFixed(2), // Total amount in USD
+                    },
+                    payee: {
+                        email_address: "10crimson.blade01@gmail.com", // استبدل بـ بريد PayPal الخاص بك
+                    },
+                }],
+            });
+        },
+        onApprove: async function (data, actions) {
+            const order = await actions.order.capture();
+            console.log('Payment successful!', order);
 
-    try {
-        // حفظ الطلب في قاعدة البيانات
-        const { data: insertedData, error } = await supabase
-            .from('orders')
-            .insert([orderData])
-            .select('id');
+            // Collect order details
+            const name = document.getElementById('name').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const size = document.getElementById('size').value;
+            const gender = document.getElementById('gender').value;
 
-        if (error) {
-            console.error('Error inserting into Supabase:', error.message);
-            alert(`Error saving order: ${error.message}`);
-            return;
-        }
+            if (!name || !address || !size || !gender) {
+                alert('Please fill in all the fields before proceeding.');
+                return;
+            }
 
-        if (insertedData && insertedData.length > 0) {
-            const orderId = insertedData[0].id;
-            console.log('Order saved successfully:', insertedData);
+            const orderData = {
+                name,
+                address,
+                size,
+                gender,
+                total_amount: totalAmount,
+                status: 'Paid',
+                created_at: new Date().toISOString(),
+                paypal_order_id: order.id, // PayPal order ID
+            };
 
-            // عرض رقم الطلب في نافذة منبثقة
-            alert(`Thank you! Your Order ID is: ${orderId}`);
+            try {
+                // Save order in database
+                const { data: insertedData, error } = await supabase
+                    .from('orders')
+                    .insert([orderData])
+                    .select('id');
 
-            // يمكنك أيضًا مسح عربة التسوق إن أردت
-            localStorage.removeItem('cart');
-        }
-         window.location.href = `https://yourwebsite.com/track.html?id=${orderId}`;
-    } catch (err) {
-        console.error('Unexpected error:', err);
-        alert('An unexpected error occurred. Please try again.');
-    }
-},
-        }).render('#paypal-button-container');
-    </script>
+                if (error) {
+                    console.error('Error inserting into Supabase:', error.message);
+                    alert(`Error saving order: ${error.message}`);
+                    return;
+                }
+
+                if (insertedData && insertedData.length > 0) {
+                    const orderId = insertedData[0].id;
+                    console.log('Order saved successfully:', insertedData);
+
+                    // Display SweetAlert confirmation with copy option
+                    Swal.fire({
+                        title: 'Thank You!',
+                        html: `
+                            <p>Your Order ID is:</p>
+                            <strong>${orderId}</strong>
+                            <p>Please copy your Order ID for future reference.</p>
+                        `,
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: 'Copy ID',
+                        cancelButtonText: 'Close',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            navigator.clipboard.writeText(orderId)
+                                .then(() => {
+                                    Swal.fire('Copied!', 'Your Order ID has been copied.', 'success');
+                                })
+                                .catch((err) => {
+                                    console.error('Failed to copy ID:', err);
+                                    Swal.fire('Error!', 'Failed to copy Order ID. Please copy it manually.', 'error');
+                                });
+                        }
+
+                        // Redirect to confirmation page
+                        window.location.href = `track-order.html?orderId=${orderId}`;
+                    });
+
+                    // Clear cart after successful order
+                    localStorage.removeItem('cart');
+                }
+            } catch (err) {
+                console.error('Unexpected error:', err);
+                alert('An unexpected error occurred. Please try again.');
+            }
+        },
+        onError: function (err) {
+            console.error('PayPal error:', err);
+            alert('Payment failed. Please try again.');
+        },
+    }).render('#paypal-button-container');
+</script>
+
 </body>
 </html>
 
