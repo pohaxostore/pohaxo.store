@@ -91,44 +91,46 @@
     document.getElementById('total-amount').value = totalAmount.toFixed(2);
 
     // Render PayPal Button
-    paypal.Buttons({
-        createOrder: function (data, actions) {
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        value: totalAmount.toFixed(2) // Total amount in USD
-                    }
-                }]
-            });
-        },
-        onApprove: async function (data, actions) {
-            const order = await actions.order.capture();
-            console.log('Payment successful!', order);
+  paypal.Buttons({
+    createOrder: function (data, actions) {
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    value: totalAmount.toFixed(2), // Total amount in USD
+                },
+            }],
+        });
+    },
+    onApprove: async function (data, actions) {
+        const order = await actions.order.capture(); // PayPal order details
+        console.log('Payment successful!', order);
 
-            // Save order to database
-            const name = document.getElementById('name').value.trim();
-            const address = document.getElementById('address').value.trim();
-            const size = document.getElementById('size').value;
-            const gender = document.getElementById('gender').value;
+        // جمع بيانات الطلب
+        const name = document.getElementById('name').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const size = document.getElementById('size').value;
+        const gender = document.getElementById('gender').value;
 
-            const orderData = {
-                name,
-                address,
-                size,
-                gender,
-                total_amount: totalAmount,
-                status: 'Paid',
-                created_at: new Date().toISOString(),
-                paypal_order_id: order.id, // PayPal order ID
-            };
+        const orderData = {
+            name,
+            address,
+            size,
+            gender,
+            total_amount: totalAmount,
+            status: 'Paid',
+            created_at: new Date().toISOString(),
+            paypal_order_id: order.id, // PayPal order ID
+        };
 
+        try {
+            // إرسال الطلب إلى Supabase
             const { data: insertedData, error } = await supabase
                 .from('orders')
                 .insert([orderData])
                 .select('id');
 
             if (error) {
-                console.error('Error details:', error);
+                console.error('Error inserting into Supabase:', error.message);
                 alert(`Error saving order: ${error.message}`);
                 return;
             }
@@ -137,18 +139,23 @@
                 const orderId = insertedData[0].id;
                 console.log('Order saved successfully:', insertedData);
 
-                // Clear cart
+                // تنظيف السلة
                 localStorage.removeItem('cart');
 
-                // Redirect to track-order page with Order ID
+                // إعادة التوجيه إلى صفحة تتبع الطلب
                 window.location.href = `track-order.html?orderId=${orderId}`;
             }
-        },
-        onError: function (err) {
-            console.error('PayPal error:', err);
-            alert('Payment failed. Please try again.');
+        } catch (err) {
+            console.error('Unexpected error:', err);
+            alert('An unexpected error occurred. Please try again.');
         }
-    }).render('#paypal-button-container');
+    },
+    onError: function (err) {
+        console.error('PayPal error:', err);
+        alert('Payment failed. Please try again.');
+    },
+}).render('#paypal-button-container');
+
 </script>
 
 </body>
