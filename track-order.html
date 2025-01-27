@@ -51,15 +51,13 @@
             background-color: #45a049;
         }
 
-        /* Advanced Progress Bar */
         .progress-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: relative;
             width: 80%;
-            margin: 0 auto;
-            margin-top: 20px;
+            margin: 20px auto;
         }
 
         .progress-bar .step {
@@ -107,10 +105,6 @@
             border-color: #4caf50;
         }
 
-        .progress-bar .icon {
-            font-size: 20px;
-        }
-
         .progress-bar .label {
             margin-top: 10px;
             font-size: 14px;
@@ -123,11 +117,6 @@
             font-size: 1.2em;
             text-align: center;
             animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .loading {
@@ -149,18 +138,17 @@
 
         <div id="loading" class="loading" style="display: none;">Loading...</div>
 
-        <!-- Enhanced Progress Bar -->
         <div class="progress-bar">
             <div class="step">
-                <div class="circle"><span class="icon">📦</span></div>
+                <div class="circle">1</div>
                 <div class="label">Order Sent</div>
             </div>
             <div class="step">
-                <div class="circle"><span class="icon">🚚</span></div>
+                <div class="circle">2</div>
                 <div class="label">In Transit</div>
             </div>
             <div class="step">
-                <div class="circle"><span class="icon">🏠</span></div>
+                <div class="circle">3</div>
                 <div class="label">Delivered</div>
             </div>
         </div>
@@ -172,73 +160,91 @@
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // ضع مفتاح Supabase هنا
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
-        const supabase = createClient(supabaseUrl, supabaseKey);
+    const trackForm = document.getElementById('track-form');
+    const loadingElement = document.getElementById('loading');
+    const statusText = document.getElementById('status-text');
+    const steps = document.querySelectorAll('.step');
 
-        const trackForm = document.getElementById('track-form');
-        const loadingElement = document.getElementById('loading');
-        const statusText = document.getElementById('status-text');
-        const steps = document.querySelectorAll('.step');
-
-        const updateProgressBar = (status) => {
-            steps.forEach((step, index) => {
-                step.classList.remove('active');
-                if (index === 0 && status === 'Order Sent') {
-                    steps[0].classList.add('active');
-                } else if (index <= 1 && status === 'In Transit') {
-                    steps[0].classList.add('active');
-                    steps[1].classList.add('active');
-                } else if (status === 'Delivered') {
-                    steps.forEach((s) => s.classList.add('active'));
-                }
-            });
-        };
-
-        trackForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const orderId = document.getElementById('order-id').value.trim();
-
-            if (!orderId) {
-                alert('Please enter a valid Order ID.');
-                return;
-            }
-
-            loadingElement.style.display = 'block';
-            statusText.innerText = '';
-            document.getElementById('order-status').style.display = 'none';
-
-            try {
-                const { data, error } = await supabase
-                    .from('orders')
-                    .select('status')
-                    .eq('id', orderId)
-                    .single();
-
-                loadingElement.style.display = 'none';
-
-                if (error) {
-                    statusText.innerText = `Error occurred: ${error.message}`;
-                } else if (!data) {
-                    statusText.innerText = 'Order not found. Please check your Order ID.';
-                } else {
-                    statusText.innerText = `Order Status: ${data.status}`;
-                    updateProgressBar(data.status);
-                }
-
-                document.getElementById('order-status').style.display = 'block';
-            } catch (err) {
-                loadingElement.style.display = 'none';
-                statusText.innerText = 'Unexpected error occurred. Please try again later.';
+    // تحديث شريط التقدم بناءً على حالة الطلب
+    const updateProgressBar = (status) => {
+        steps.forEach((step, index) => {
+            step.classList.remove('active');
+            if (index === 0 && status === 'Order Sent') {
+                steps[0].classList.add('active');
+            } else if (index <= 1 && status === 'In Transit') {
+                steps[0].classList.add('active');
+                steps[1].classList.add('active');
+            } else if (status === 'Delivered') {
+                steps.forEach((s) => s.classList.add('active'));
             }
         });
-    </script>
+    };
+
+    // جلب حالة الطلب من قاعدة البيانات
+    const fetchOrderStatus = async (orderId) => {
+        loadingElement.style.display = 'block';
+        statusText.innerText = '';
+        document.getElementById('order-status').style.display = 'none';
+
+        try {
+            const { data, error } = await supabase
+                .from('orders')
+                .select('status')
+                .eq('id', orderId)
+                .single();
+
+            loadingElement.style.display = 'none';
+
+            if (error || !data) {
+                statusText.innerText = 'Order not found. Please check your Order ID.';
+            } else {
+                statusText.innerText = `Order Status: ${data.status}`;
+                updateProgressBar(data.status);
+            }
+
+            document.getElementById('order-status').style.display = 'block';
+        } catch (err) {
+            loadingElement.style.display = 'none';
+            statusText.innerText = 'Unexpected error occurred. Please try again later.';
+        }
+    };
+
+    // استخراج ID الطلب من رابط URL عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id'); // جلب ID الطلب من الرابط
+
+        if (orderId) {
+            document.getElementById('order-id').value = orderId; // تعبئة الحقل بـ ID الطلب
+            await fetchOrderStatus(orderId); // جلب حالة الطلب مباشرة
+        }
+    });
+
+    // التعامل مع إرسال النموذج يدويًا
+    trackForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const orderId = document.getElementById('order-id').value.trim();
+
+        if (!orderId) {
+            alert('Please enter a valid Order ID.');
+            return;
+        }
+
+        await fetchOrderStatus(orderId); // جلب حالة الطلب عند الإرسال
+    });
+</script>
+
+  
 </body>
 </html>
+
 
 
 
