@@ -89,7 +89,7 @@
                     }],
                 });
             },
-            onApprove: async function (data, actions) {
+                       onApprove: async function (data, actions) {
                 const order = await actions.order.capture();
                 console.log('Payment successful!', order);
 
@@ -120,7 +120,7 @@
                     const { data: insertedData, error } = await supabase
                         .from('orders')
                         .insert([orderData])
-                        .select('id');
+                        .select('*'); // استرجاع جميع الحقول بما فيها `id`
 
                     if (error) {
                         console.error('Error inserting into Supabase:', error.message);
@@ -129,22 +129,22 @@
                     }
 
                     if (insertedData && insertedData.length > 0) {
-                        const orderId = insertedData[0].id;
+                        const orderId = insertedData[0].id; // استرجاع معرّف الطلب
                         console.log('Order saved successfully:', insertedData);
 
                         // Clear cart and redirect to order tracking
                         localStorage.removeItem('cart');
                         window.location.href = `track-order.html?orderId=${orderId}`;
+                    } else {
+                        console.error('No data returned after insertion.');
+                        alert('Order not saved. Please try again.');
                     }
                 } catch (err) {
                     console.error('Unexpected error:', err);
                     alert('An unexpected error occurred. Please try again.');
                 }
             },
-            onError: function (err) {
-                console.error('PayPal error:', err);
-                alert('Payment failed. Please try again.');
-            },
+
         }).render('#paypal-button-container');
     </script>
 </body>
