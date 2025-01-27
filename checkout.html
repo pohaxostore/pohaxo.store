@@ -20,41 +20,53 @@
     <main>
         <section class="checkout-section">
             <h2>Order Details</h2>
-            <div id="paypal-button-container"></div>
 
-            <!-- User Input Fields -->
-            <div class="form-group">
-                <label for="name">Full Name:</label>
-                <input type="text" id="name" placeholder="Your Name" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Shipping Address:</label>
-                <textarea id="address" placeholder="Your Shipping Address" rows="4" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="size">Select Size:</label>
-                <select id="size" required>
-                    <option value="S">Small (S)</option>
-                    <option value="M">Medium (M)</option>
-                    <option value="L">Large (L)</option>
-                    <option value="XL">Extra Large (XL)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="gender">Select Gender:</label>
-                <select id="gender" required>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
+            <!-- PayPal Form -->
+            <form id="checkout-form">
+                <!-- User Input Fields -->
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Shipping Address:</label>
+                    <textarea id="address" placeholder="Your Shipping Address" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="size">Select Size:</label>
+                    <select id="size" required>
+                        <option value="S">Small (S)</option>
+                        <option value="M">Medium (M)</option>
+                        <option value="L">Large (L)</option>
+                        <option value="XL">Extra Large (XL)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Select Gender:</label>
+                    <select id="gender" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <!-- PayPal Button -->
+                <div id="paypal-button-container"></div>
+            </form>
         </section>
     </main>
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
 
-    <script>
-        // Calculate the total amount from localStorage
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        // Supabase initialization
+        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // استبدل بـ API Key الخاص بك
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // Calculate total amount
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -62,22 +74,17 @@
             alert('Your cart is empty! Please add items to proceed.');
             window.location.href = 'cart.html';
         }
-    </script>
 
-     <input type="hidden" name="business" value="10crimson.blade01@gmail.com"> 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
-        const supabase = createClient(supabaseUrl, supabaseKey);
-
+        // Render PayPal Button
         paypal.Buttons({
             createOrder: function (data, actions) {
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: totalAmount.toFixed(2),
+                            value: totalAmount.toFixed(2), // Total amount in USD
+                        },
+                        payee: {
+                            email_address: "10crimson.blade01@gmail.com", // استبدل بـ بريد PayPal الخاص بك
                         },
                     }],
                 });
