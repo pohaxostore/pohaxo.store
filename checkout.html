@@ -3,152 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout</title>
+    <title>Track Your Order</title>
     <link rel="stylesheet" href="style1.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4caf50;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        main {
+            margin: 20px;
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        .progress-bar .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+        }
+
+        .progress-bar .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 5px;
+            background-color: #ddd;
+            z-index: -1;
+            transform: translateX(calc(-50% + 20px));
+            transition: background-color 0.5s;
+        }
+
+        .progress-bar .step.active:not(:last-child)::after {
+            background-color: #4caf50;
+        }
+
+        .progress-bar .circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            transition: all 0.5s;
+        }
+
+        .progress-bar .circle.active {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .progress-bar .label {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #status-text {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .loading {
+            font-size: 1em;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Checkout</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="cart.html">Cart</a></li>
-            </ul>
-        </nav>
+        <h1>Track Your Order</h1>
     </header>
     <main>
-        <section class="checkout-section">
-            <h2>Order Details</h2>
+        <form id="track-form">
+            <input type="text" id="order-id" placeholder="Enter your order ID" required>
+            <button type="submit" id="track-button">Track Order</button>
+        </form>
 
-            <!-- User Input Fields -->
-            <div class="form-group">
-                <label for="name">Full Name:</label>
-                <input type="text" id="name" placeholder="Your Name" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Shipping Address:</label>
-                <textarea id="address" placeholder="Your Shipping Address" rows="4" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="size">Select Size:</label>
-                <select id="size" required>
-                    <option value="S">Small (S)</option>
-                    <option value="M">Medium (M)</option>
-                    <option value="L">Large (L)</option>
-                    <option value="XL">Extra Large (XL)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="gender">Select Gender:</label>
-                <select id="gender" required>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
+        <div id="loading" class="loading" style="display: none;">Loading...</div>
 
-            <!-- PayPal Button -->
-            <div id="paypal-button-container"></div>
-        </section>
+        <div class="progress-bar">
+            <div class="step">
+                <div class="circle">1</div>
+                <div class="label">Order Sent</div>
+            </div>
+            <div class="step">
+                <div class="circle">2</div>
+                <div class="label">In Transit</div>
+            </div>
+            <div class="step">
+                <div class="circle">3</div>
+                <div class="label">Delivered</div>
+            </div>
+        </div>
+
+        <div id="order-status" style="display: none;">
+            <p id="status-text"></p>
+        </div>
     </main>
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    <!-- Load PayPal JavaScript SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AQOy865ool-s4lbnULnkXAs0hrCfBYaLV-P87ZK3VqckJLejTayI7gdkxz6liI7wRF0inhmQ9Ph4A4yH&currency=USD"></script>
+    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // ضع مفتاح Supabase هنا
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const trackForm = document.getElementById('track-form');
+    const loadingElement = document.getElementById('loading');
+    const statusText = document.getElementById('status-text');
+    const steps = document.querySelectorAll('.step');
 
-        // Supabase initialization
-        const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // استبدل بـ API Key الخاص بك
-        const supabase = createClient(supabaseUrl, supabaseKey);
+    // تحديث شريط التقدم بناءً على حالة الطلب
+    const updateProgressBar = (status) => {
+        steps.forEach((step, index) => {
+            step.classList.remove('active');
+            if (index === 0 && status === 'Order Sent') {
+                steps[0].classList.add('active');
+            } else if (index <= 1 && status === 'In Transit') {
+                steps[0].classList.add('active');
+                steps[1].classList.add('active');
+            } else if (status === 'Delivered') {
+                steps.forEach((s) => s.classList.add('active'));
+            }
+        });
+    };
 
-        // Calculate total amount
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    // جلب حالة الطلب من قاعدة البيانات
+    const fetchOrderStatus = async (orderId) => {
+        loadingElement.style.display = 'block';
+        statusText.innerText = '';
+        document.getElementById('order-status').style.display = 'none';
 
-        if (!totalAmount) {
-            alert('Your cart is empty! Please add items to proceed.');
-            window.location.href = 'cart.html';
+        try {
+            const { data, error } = await supabase
+                .from('orders')
+                .select('status')
+                .eq('id', orderId)
+                .single();
+
+            loadingElement.style.display = 'none';
+
+            if (error || !data) {
+                statusText.innerText = 'Order not found. Please check your Order ID.';
+            } else {
+                statusText.innerText = `Order Status: ${data.status}`;
+                updateProgressBar(data.status);
+            }
+
+            document.getElementById('order-status').style.display = 'block';
+        } catch (err) {
+            loadingElement.style.display = 'none';
+            statusText.innerText = 'Unexpected error occurred. Please try again later.';
+        }
+    };
+
+    // استخراج ID الطلب من رابط URL عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id'); // جلب ID الطلب من الرابط
+
+        if (orderId) {
+            document.getElementById('order-id').value = orderId; // تعبئة الحقل بـ ID الطلب
+            await fetchOrderStatus(orderId); // جلب حالة الطلب مباشرة
+        }
+    });
+
+    // التعامل مع إرسال النموذج يدويًا
+    trackForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const orderId = document.getElementById('order-id').value.trim();
+
+        if (!orderId) {
+            alert('Please enter a valid Order ID.');
+            return;
         }
 
-        // Render PayPal Button
-        paypal.Buttons({
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: totalAmount.toFixed(2), // Total amount in USD
-                        },
-                        payee: {
-                            email_address: "10crimson.blade01@gmail.com", // استبدل بـ بريد PayPal الخاص بك
-                        },
-                    }],
-                });
-            },
-                       onApprove: async function (data, actions) {
-                const order = await actions.order.capture();
-                console.log('Payment successful!', order);
+        await fetchOrderStatus(orderId); // جلب حالة الطلب عند الإرسال
+    });
+</script>
 
-                // Collect order details
-                const name = document.getElementById('name').value.trim();
-                const address = document.getElementById('address').value.trim();
-                const size = document.getElementById('size').value;
-                const gender = document.getElementById('gender').value;
-
-                if (!name || !address || !size || !gender) {
-                    alert('Please fill in all the fields before proceeding.');
-                    return;
-                }
-
-                const orderData = {
-                    name,
-                    address,
-                    size,
-                    gender,
-                    total_amount: totalAmount,
-                    status: 'Paid',
-                    created_at: new Date().toISOString(),
-                    paypal_order_id: order.id, // PayPal order ID
-                };
-
-                try {
-                    // Insert order into Supabase
-                    const { data: insertedData, error } = await supabase
-                        .from('orders')
-                        .insert([orderData])
-                        .select('*'); // استرجاع جميع الحقول بما فيها `id`
-
-                    if (error) {
-                        console.error('Error inserting into Supabase:', error.message);
-                        alert(`Error saving order: ${error.message}`);
-                        return;
-                    }
-
-                    if (insertedData && insertedData.length > 0) {
-                        const orderId = insertedData[0].id; // استرجاع معرّف الطلب
-                        console.log('Order saved successfully:', insertedData);
-
-                        // Clear cart and redirect to order tracking
-                        localStorage.removeItem('cart');
-                        window.location.href = `track-order.html?orderId=${orderId}`;
-                    } else {
-                        console.error('No data returned after insertion.');
-                        alert('Order not saved. Please try again.');
-                    }
-                } catch (err) {
-                    console.error('Unexpected error:', err);
-                    alert('An unexpected error occurred. Please try again.');
-                }
-            },
-
-        }).render('#paypal-button-container');
-    </script>
+  
 </body>
 </html>
+
 
 
 
