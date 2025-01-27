@@ -90,61 +90,60 @@
                 });
             },
             onApprove: async function (data, actions) {
-                const order = await actions.order.capture();
-                console.log('Payment successful!', order);
+    const order = await actions.order.capture();
+    console.log('Payment successful!', order);
 
-                // Collect order details
-                const name = document.getElementById('name').value.trim();
-                const address = document.getElementById('address').value.trim();
-                const size = document.getElementById('size').value;
-                const gender = document.getElementById('gender').value;
+    // جمع تفاصيل الطلب
+    const name = document.getElementById('name').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const size = document.getElementById('size').value;
+    const gender = document.getElementById('gender').value;
 
-                if (!name || !address || !size || !gender) {
-                    alert('Please fill in all the fields before proceeding.');
-                    return;
-                }
+    if (!name || !address || !size || !gender) {
+        alert('Please fill in all the fields before proceeding.');
+        return;
+    }
 
-                const orderData = {
-                    name,
-                    address,
-                    size,
-                    gender,
-                    total_amount: totalAmount,
-                    status: 'Paid',
-                    created_at: new Date().toISOString(),
-                    paypal_order_id: order.id, // PayPal order ID
-                };
+    const orderData = {
+        name,
+        address,
+        size,
+        gender,
+        total_amount: totalAmount,
+        status: 'Paid',
+        created_at: new Date().toISOString(),
+        paypal_order_id: order.id, // PayPal order ID
+    };
 
-                try {
-                    // Insert order into Supabase
-                    const { data: insertedData, error } = await supabase
-                        .from('orders')
-                        .insert([orderData])
-                        .select('id');
+    try {
+        // حفظ الطلب في قاعدة البيانات
+        const { data: insertedData, error } = await supabase
+            .from('orders')
+            .insert([orderData])
+            .select('id');
 
-                    if (error) {
-                        console.error('Error inserting into Supabase:', error.message);
-                        alert(`Error saving order: ${error.message}`);
-                        return;
-                    }
+        if (error) {
+            console.error('Error inserting into Supabase:', error.message);
+            alert(`Error saving order: ${error.message}`);
+            return;
+        }
 
-                    if (insertedData && insertedData.length > 0) {
-                        const orderId = insertedData[0].id;
-                        console.log('Order saved successfully:', insertedData);
+        if (insertedData && insertedData.length > 0) {
+            const orderId = insertedData[0].id;
+            console.log('Order saved successfully:', insertedData);
 
-                        // Clear cart and redirect to order tracking
-                        localStorage.removeItem('cart');
-                        window.location.href = `track-order.html?orderId=${orderId}`;
-                    }
-                } catch (err) {
-                    console.error('Unexpected error:', err);
-                    alert('An unexpected error occurred. Please try again.');
-                }
-            },
-            onError: function (err) {
-                console.error('PayPal error:', err);
-                alert('Payment failed. Please try again.');
-            },
+            // عرض رقم الطلب في نافذة منبثقة
+            alert(`Thank you! Your Order ID is: ${orderId}`);
+
+            // يمكنك أيضًا مسح عربة التسوق إن أردت
+            localStorage.removeItem('cart');
+        }
+         window.location.href = `https://yourwebsite.com/track.html?id=${orderId}`;
+    } catch (err) {
+        console.error('Unexpected error:', err);
+        alert('An unexpected error occurred. Please try again.');
+    }
+},
         }).render('#paypal-button-container');
     </script>
 </body>
