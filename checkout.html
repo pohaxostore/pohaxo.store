@@ -21,42 +21,42 @@
         <section class="checkout-section">
             <h2>Order Details</h2>
 
-            <!-- PayPal Form -->
-            <form id="checkout-form">
-                <!-- User Input Fields -->
-                <div class="form-group">
-                    <label for="name">Full Name:</label>
-                    <input type="text" id="name" placeholder="Your Name" required>
-                </div>
-                <div class="form-group">
-                    <label for="address">Shipping Address:</label>
-                    <textarea id="address" placeholder="Your Shipping Address" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="size">Select Size:</label>
-                    <select id="size" required>
-                        <option value="S">Small (S)</option>
-                        <option value="M">Medium (M)</option>
-                        <option value="L">Large (L)</option>
-                        <option value="XL">Extra Large (XL)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="gender">Select Gender:</label>
-                    <select id="gender" required>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                </div>
+            <!-- User Input Fields -->
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Shipping Address:</label>
+                <textarea id="address" placeholder="Your Shipping Address" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="size">Select Size:</label>
+                <select id="size" required>
+                    <option value="S">Small (S)</option>
+                    <option value="M">Medium (M)</option>
+                    <option value="L">Large (L)</option>
+                    <option value="XL">Extra Large (XL)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="gender">Select Gender:</label>
+                <select id="gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
 
-                <!-- PayPal Button -->
-                <div id="paypal-button-container"></div>
-            </form>
+            <!-- PayPal Button -->
+            <div id="paypal-button-container"></div>
         </section>
     </main>
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
+
+    <!-- Load PayPal JavaScript SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AQOy865ool-s4lbnULnkXAs0hrCfBYaLV-P87ZK3VqckJLejTayI7gdkxz6liI7wRF0inhmQ9Ph4A4yH&currency=USD"></script>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -149,6 +149,7 @@
     </script>
 </body>
 </html>
+
 
 
 
