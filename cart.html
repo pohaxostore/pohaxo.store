@@ -128,10 +128,11 @@
                         <td><input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)"></td>
                         <td>
                             <select onchange="updateShipping(${index}, this.value)">
-                                <option value="USA" ${item.shipping === "USA" ? "selected" : ""}>USA - $10</option>
-                                <option value="Europe" ${item.shipping === "Europe" ? "selected" : ""}>Europe - $15</option>
-                                <option value="Asia" ${item.shipping === "Asia" ? "selected" : ""}>Asia - $20</option>
-                                <option value="Other" ${item.shipping === "Other" ? "selected" : ""}>Other - $25</option>
+                                <option value="USA" ${item.shipping === "USA" ? "selected" : ""}>USA - $7</option>
+                                <option value="MOROCCO" ${item.shipping === "morocco" ? "selected" : ""}>MOROCCO - $2</option>
+                                <option value="france" ${item.shipping === "france" ? "selected" : ""}>france - $9</option>
+                                <option value="spain" ${item.shipping === "spain" ? "selected" : ""}>spain - $8</option>
+                                <option value="Other" ${item.shipping === "Other" ? "selected" : ""}>Other - $10</option>
                             </select>
                         </td>
                         <td>${formatPrice(itemTotal)} USD</td>
