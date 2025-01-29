@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,6 +12,7 @@
             background: linear-gradient(to bottom, #e0eafc, #cfdef3);
             min-height: 100vh;
         }
+
         header {
             background: rgba(0, 0, 0, 0.7);
             color: white;
@@ -23,6 +23,7 @@
             z-index: 10;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         header h1 {
             font-size: 32px;
             margin: 0;
@@ -30,24 +31,31 @@
             background: linear-gradient(to right, #ff7eb3, #ff758c);
             -webkit-background-clip: text;
             color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
+
         .cart-section {
             padding: 40px;
             background: #fff;
             border-radius: 10px;
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
+            max-width: 800px;
             margin: 40px auto;
         }
+
         .cart-table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
+
         .cart-table th, .cart-table td {
             text-align: center;
             padding: 15px;
             border: 1px solid #ddd;
+            font-size: 16px;
         }
+
         .checkout-btn {
             padding: 12px 25px;
             background: #ff758c;
@@ -56,6 +64,11 @@
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background: #ff4b6e;
         }
     </style>
 </head>
@@ -63,6 +76,7 @@
     <header>
         <h1>Your Cart</h1>
     </header>
+
     <main>
         <section class="cart-section">
             <h2>Items in Your Cart</h2>
@@ -72,13 +86,14 @@
                         <th>Product</th>
                         <th>Price</th>
                         <th>Quantity</th>
-                        <th>Shipping Location</th>
-                        <th>Shipping Cost</th>
+                        <th>Shipping</th>
                         <th>Total</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="cart-items"></tbody>
+                <tbody id="cart-items">
+                    <!-- Items will be dynamically populated -->
+                </tbody>
             </table>
             <div class="cart-summary">
                 <h3>Total: <span id="total-price">0.00 USD</span></h3>
@@ -86,71 +101,80 @@
             </div>
         </section>
     </main>
+
     <script>
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const shippingRates = { "USA": 10, "Canada": 12, "UK": 8, "Germany": 9 };
-        
+        const shippingRates = { "USA": 10, "Europe": 15, "Asia": 20, "Other": 25 };
+
+        function formatPrice(price) {
+            return parseFloat(price).toFixed(2);
+        }
+
         function updateCart() {
             const cartItems = document.getElementById('cart-items');
             const totalPriceElement = document.getElementById('total-price');
             cartItems.innerHTML = '';
             let total = 0;
-            
+
             cart.forEach((item, index) => {
-                const shippingCost = shippingRates[item.shipping || "USA"] || 0;
+                const shippingCost = shippingRates[item.shipping] || 25;
                 const itemTotal = (item.price * item.quantity) + shippingCost;
                 total += itemTotal;
-                
+
                 cartItems.innerHTML += `
                     <tr>
                         <td>${item.name}</td>
-                        <td>${item.price.toFixed(2)} USD</td>
+                        <td>${formatPrice(item.price)} USD</td>
                         <td><input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)"></td>
                         <td>
                             <select onchange="updateShipping(${index}, this.value)">
-                                ${Object.keys(shippingRates).map(country => 
-                                    `<option value="${country}" ${item.shipping === country ? 'selected' : ''}>${country}</option>`
-                                ).join('')}
+                                <option value="USA" ${item.shipping === "USA" ? "selected" : ""}>USA - $10</option>
+                                <option value="Europe" ${item.shipping === "Europe" ? "selected" : ""}>Europe - $15</option>
+                                <option value="Asia" ${item.shipping === "Asia" ? "selected" : ""}>Asia - $20</option>
+                                <option value="Other" ${item.shipping === "Other" ? "selected" : ""}>Other - $25</option>
                             </select>
                         </td>
-                        <td>${shippingCost.toFixed(2)} USD</td>
-                        <td>${itemTotal.toFixed(2)} USD</td>
+                        <td>${formatPrice(itemTotal)} USD</td>
                         <td><button onclick="removeItem(${index})">Remove</button></td>
                     </tr>
                 `;
             });
-            
-            totalPriceElement.textContent = total.toFixed(2) + " USD";
-            localStorage.setItem('cart', JSON.stringify(cart));
+
+            totalPriceElement.textContent = `${formatPrice(total)} USD`;
         }
-        
+
         function updateQuantity(index, quantity) {
             cart[index].quantity = Math.max(1, parseInt(quantity));
+            localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
-        
-        function updateShipping(index, country) {
-            cart[index].shipping = country;
+
+        function updateShipping(index, shipping) {
+            cart[index].shipping = shipping;
+            localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
-        
+
         function removeItem(index) {
             cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
-        
+
         function checkout() {
             if (cart.length === 0) {
                 alert("Your cart is empty!");
                 return;
             }
+            localStorage.setItem('totalPrice', document.getElementById('total-price').textContent);
             window.location.href = 'checkout.html';
         }
-        
+
         document.addEventListener('DOMContentLoaded', updateCart);
     </script>
 </body>
 </html>
+
 
 
 
