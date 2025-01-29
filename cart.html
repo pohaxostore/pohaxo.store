@@ -166,7 +166,14 @@
                 alert("Your cart is empty!");
                 return;
             }
-            localStorage.setItem('totalPrice', document.getElementById('total-price').textContent);
+            
+            let totalWithShipping = 0;
+            cart.forEach(item => {
+                const shippingCost = shippingRates[item.shipping] || 25;
+                totalWithShipping += (item.price * item.quantity) + shippingCost;
+            });
+            
+            localStorage.setItem('totalPrice', totalWithShipping.toFixed(2));
             window.location.href = 'checkout.html';
         }
 
@@ -174,7 +181,6 @@
     </script>
 </body>
 </html>
-
 
 
 
