@@ -93,115 +93,92 @@
             font-size: 16px;
             color: #555;
         }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        th { background: #333; color: #fff; }
+        select { padding: 5px; }
+          table { width: 100%; border-collapse: collapse; background: #fff; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Your Cart</h1>
-    </header>
-
-    <main>
-        <section class="cart-section">
-            <h2>Items in Your Cart</h2>
-            <div class="cart-summary">
-                <h3>Total: <span id="total-price">0.00 USD</span></h3>
-                <button class="checkout-btn" onclick="checkout()">Checkout</button>
-            </div>
-        </section>
-
-        <section class="delivery-section">
-            <h2>Delivery Options</h2>
-            <label for="product-select">Select Product:</label>
-            <select id="product-select">
-                <!-- سيتم تعبئة المنتجات ديناميكيًا -->
-            </select>
-
-            <label for="delivery-country">Select Delivery Country:</label>
-            <select id="delivery-country">
-                <!-- سيتم تعبئة الدول ديناميكيًا -->
-            </select>
-
-            <div id="delivery-info" class="delivery-details">
-                Choose a country and product to see delivery details.
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
-    </footer>
+    <h2>Your Cart</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Delivery Country</th>
+                <th>Delivery Cost</th>
+                <th>Estimated Time</th>
+            </tr>
+        </thead>
+        <tbody id="cart-body">
+            <!-- سيتم ملء المنتجات هنا ديناميكيًا -->
+        </tbody>
+    </table>
 
     <script>
-        // قواعد التوصيل حسب الدولة والمنتج
+        const cartItems = [
+            { name: "Balaclava Zip", price: 30, quantity: 1 },
+            { name: "Ferrari Jacket F1", price: 120, quantity: 1 }
+        ];
+
         const deliveryRules = {
             "Balaclava Zip": {
-                "USA": { "price": 10, "time": "5-7 days" },
-                "Germany": { "price": 15, "time": "3-5 days" },
-                "UAE": { "price": 20, "time": "7-10 days" },
-                "Morocco": { "price": 20, "time": "7-10 days" },
-                "default": { "price": 25, "time": "10-15 days" }
+                "USA": { price: 10, time: "5-7 days" },
+                "Germany": { price: 15, time: "3-5 days" },
+                "UAE": { price: 20, time: "7-10 days" },
+                "Morocco": { price: 20, time: "7-10 days" },
+                "default": { price: 25, time: "10-15 days" }
             },
             "Ferrari Jacket F1": {
-                "USA": { "price": 12, "time": "4-6 days" },
-                "Germany": { "price": 18, "time": "2-4 days" },
-                "UAE": { "price": 22, "time": "6-9 days" },
-                "Morocco": { "price": 20, "time": "7-10 days" },
-                "default": { "price": 28, "time": "9-14 days" }
+                "USA": { price: 12, time: "4-6 days" },
+                "Germany": { price: 18, time: "2-4 days" },
+                "UAE": { price: 22, time: "6-9 days" },
+                "Morocco": { price: 20, time: "7-10 days" },
+                "default": { price: 28, time: "9-14 days" }
             }
         };
 
-        const deliveryCountrySelect = document.getElementById('delivery-country');
-        const deliveryInfo = document.getElementById('delivery-info');
-        const productSelect = document.getElementById('product-select');
-
-        function populateCountries() {
-            const countries = ["USA", "Germany", "UAE", "Morocco", "Other"];
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country;
-                option.textContent = country;
-                deliveryCountrySelect.appendChild(option);
+        function populateCart() {
+            const cartBody = document.getElementById("cart-body");
+            cartBody.innerHTML = "";
+            
+            cartItems.forEach((item, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>$${item.price}</td>
+                    <td>${item.quantity}</td>
+                    <td>
+                        <select onchange="updateDeliveryInfo(${index}, this.value)">
+                            <option value="USA">USA</option>
+                            <option value="Germany">Germany</option>
+                            <option value="UAE">UAE</option>
+                            <option value="Morocco">Morocco</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
+                    <td id="delivery-cost-${index}">$0</td>
+                    <td id="delivery-time-${index}">-</td>
+                `;
+                cartBody.appendChild(row);
             });
         }
 
-        function populateProducts() {
-            const products = Object.keys(deliveryRules);
-            products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product;
-                option.textContent = product;
-                productSelect.appendChild(option);
-            });
+        function updateDeliveryInfo(index, country) {
+            const item = cartItems[index];
+            const deliveryData = deliveryRules[item.name][country] || deliveryRules[item.name]["default"];
+            document.getElementById(`delivery-cost-${index}`).textContent = `$${deliveryData.price}`;
+            document.getElementById(`delivery-time-${index}`).textContent = deliveryData.time;
         }
 
-        function updateDeliveryInfo() {
-            const selectedCountry = deliveryCountrySelect.value;
-            const selectedProduct = productSelect.value;
-            let details;
-
-            if (selectedCountry === "Other") {
-                details = deliveryRules[selectedProduct]["default"];
-            } else {
-                details = deliveryRules[selectedProduct][selectedCountry] || deliveryRules[selectedProduct]["default"];
-            }
-
-            deliveryInfo.innerHTML = `Delivery Cost: $${details.price}, Estimated Time: ${details.time}`;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            populateCountries();
-            populateProducts();
-            updateDeliveryInfo();
+        document.addEventListener("DOMContentLoaded", () => {
+            populateCart();
         });
-
-        productSelect.addEventListener('change', updateDeliveryInfo);
-        deliveryCountrySelect.addEventListener('change', updateDeliveryInfo);
     </script>
 </body>
 </html>
-
-
-
 
 
 
