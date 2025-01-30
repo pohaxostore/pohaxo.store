@@ -3,26 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hoodies Collection</title>
+    <title>T-shirts Collection</title>
     <link rel="stylesheet" href="style3.css">
 </head>
 <body>
-
-<header>
-    <h1>Hoodies Collection</h1>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="products.html" class="active">Products</a></li>
-            <li><a href="cart.html">Cart <span id="cart-count">0</span></a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-        </ul>
-    </nav>
-</header>
-
-<div class="container">
-    <section class="products">
-        <article class="product-card">
+    <header>
+        <h1> Shoes Collection</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html" class="active">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- تصنيف المنتجات -->
+        <section class="products">
+            <h2>Our Premium Hoodies</h2>
+            <div class="product-grid">
+                <!-- بطاقة المنتج -->
+               <article class="product-card">
             <img src="images/BALACRAVA.jpg" alt="Balaclava Zip">
             <h3>Balaclava Zip</h3>
             <p>Stylish hoodie with integrated face cover.</p>
@@ -32,6 +34,7 @@
 
         <article class="product-card">
             <img src="images/ferrari.jpg" alt="Ferrari Jacket F1">
+            <div class="product-info">
             <h3>Ferrari Jacket F1</h3>
             <p>Bold modern design for everyday wear.</p>
             <p class="price">$0.01</p>
@@ -40,6 +43,7 @@
 
         <article class="product-card">
             <img src="images/mens.jpg" alt="Gothic Dark Hoodie">
+            <div class="product-info">
             <h3>Gothic Dark Hoodie</h3>
             <p>A gothic dark print hoodie with eerie skulls and moonlit designs.</p>
             <p class="price">$25.50</p>
@@ -48,6 +52,7 @@
 
         <article class="product-card">
             <img src="images/mens1.jpg" alt="Print Hoodie">
+            <div class="product-info">
             <h3>Print Hoodie</h3>
             <p>Stylish hoodie with unique designs for casual wear.</p>
             <p class="price">$22.10</p>
@@ -56,58 +61,52 @@
 
         <article class="product-card">
             <img src="images/mens2.jpg" alt="Full Face Mask">
+            <div class="product-info">
             <h3>Full Face Mask</h3>
             <p>Bold skull print mask with breathable fabric.</p>
             <p class="price">$7.00</p>
-            <p class="free-shipping">🚚 Free Shipping</p>
-            <button class="add-to-cart" onclick="addToCart('Full Face Mask', 7.00, true)">Add to Cart</button>
+            <button class="add-to-cart" onclick="addToCart('Full Face Mask', 7.00)">Add to Cart</button>
         </article>
 
         <article class="product-card">
             <img src="images/mens3.jpg" alt="Urban Edge Hooded Jacket">
+            <div class="product-info">
             <h3>Urban Edge Hooded Jacket</h3>
             <p>Stylish, modern fit, perfect for everyday wear.</p>
             <p class="price">$22.10</p>
             <button class="add-to-cart" onclick="addToCart('Urban Edge Hooded Jacket', 22.10)">Add to Cart</button>
         </article>
-    </section>
-</div>
-<script>
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                 <article class="product-card">
+                    <img src="images/zoo2.jpg.webp" alt="Black And White Shoes">
+                    <div class="product-info">
+                        <h3>Black And White Shoes</h3>
+                        <p>Stylish and versatile black and white shoes with a sleek, modern design. Crafted for comfort and durability, perfect for casual wear or adding a bold touch to any outfit.</p>
+                        <p class="price">$28.99</p>
+                        <button class="add-to-cart" onclick="addToCart('Black And White Shoes', 28.99)">Add to Cart</button>
+                    </div>
+                </article>
+                <!-- المزيد من المنتجات -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
+    </footer>
 
-function addToCart(productName, price, freeShipping = false) {
-    let existingProduct = cart.find(item => item.name === productName);
-    if (existingProduct) {
-        existingProduct.quantity += 1;
-    } else {
-        cart.push({ name: productName, price: parseFloat(price), quantity: 1, freeShipping });
-    }
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-    alert(`${productName} added to cart! ${freeShipping ? '🚚 Free Shipping included!' : ''}`);
-}
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-function updateCartCount() {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    
-    let cartCountElement = document.getElementById('cart-count');
-    
-    if (!cartCountElement) {
-        let nav = document.querySelector('nav ul'); 
-        if (nav) {
-            let li = document.createElement('li');
-            li.innerHTML = `<a href="cart.html">Cart (<span id="cart-count">${totalCount}</span>)</a>`;
-            nav.appendChild(li);
+        function addToCart(productName, price) {
+            const existingProduct = cart.find(item => item.name === productName);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ name: productName, price: parseFloat(price), quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${productName} added to cart!`);
         }
-    } else {
-        cartCountElement.textContent = totalCount;
-    }
-}
-
-document.addEventListener('DOMContentLoaded', updateCartCount);
-</script>
-
+    </script>
 </body>
 </html>
 
