@@ -88,11 +88,10 @@
         </article>
     </section>
 </div>
-
 <script>
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-   function addToCart(productName, price, freeShipping = false) {
+function addToCart(productName, price, freeShipping = false) {
     let existingProduct = cart.find(item => item.name === productName);
     if (existingProduct) {
         existingProduct.quantity += 1;
@@ -104,14 +103,25 @@
     alert(`${productName} added to cart! ${freeShipping ? '🚚 Free Shipping included!' : ''}`);
 }
 
-
-    function updateCartCount() {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-        document.getElementById('cart-count').textContent = totalCount;
+function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    let cartCountElement = document.getElementById('cart-count');
+    
+    if (!cartCountElement) {
+        let nav = document.querySelector('nav ul'); 
+        if (nav) {
+            let li = document.createElement('li');
+            li.innerHTML = `<a href="cart.html">Cart (<span id="cart-count">${totalCount}</span>)</a>`;
+            nav.appendChild(li);
+        }
+    } else {
+        cartCountElement.textContent = totalCount;
     }
+}
 
-    document.addEventListener('DOMContentLoaded', updateCartCount);
+document.addEventListener('DOMContentLoaded', updateCartCount);
 </script>
 
 </body>
