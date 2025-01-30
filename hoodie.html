@@ -4,104 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hoodies Collection</title>
-    <link rel="stylesheet" href="style3.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        header { background: #333; color: #fff; padding: 15px 0; text-align: center; }
+        nav ul { list-style: none; padding: 0; }
+        nav ul li { display: inline; margin: 0 15px; }
+        nav ul li a { color: #fff; text-decoration: none; font-size: 18px; }
+        .container { max-width: 1100px; margin: auto; padding: 20px; }
+        .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .product-card { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; }
+        .product-card img { max-width: 100%; border-radius: 5px; }
+        .product-card h3 { font-size: 20px; margin: 10px 0; }
+        .product-card p.price { font-size: 18px; font-weight: bold; color: #e44d26; }
+        .add-to-cart { background: #28a745; color: #fff; border: none; padding: 10px; cursor: pointer; border-radius: 5px; }
+        .add-to-cart:hover { background: #218838; }
+        #cart-count { background: red; color: white; padding: 3px 7px; border-radius: 50%; font-size: 14px; margin-left: 5px; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Hoodies Collection</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html" class="active">Products</a></li>
-                <li><a href="cart.html">Cart</a></li>
-                <li><a href="contact.html">Contact Us</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <!-- تصنيف المنتجات -->
-        <section class="products">
-            <h2>Our Premium Hoodies</h2>
-            <div class="product-grid">
-                <!-- بطاقة المنتج -->
-                <article class="product-card">
-                    <img src="images/BALACRAVA.jpg" alt="Balaclava Zip">
-                    <div class="product-info">
-                        <h3>Balaclava Zip</h3>
-                        <p>Stylish hoodie with integrated face cover.</p>
-                        <p class="price">$0.01</p>
-                        <button class="add-to-cart" onclick="addToCart('Balaclava Zip', 0.01)">Add to Cart</button>
-                    </div>
-                </article>
-                <!-- منتج آخر -->
-                <article class="product-card">
-                    <img src="images/ferrari.jpg" alt="ferrari jacket F1">
-                    <div class="product-info">
-                        <h3>ferrari jacket F1</h3>
-                        <p>Bold modern design for everyday wear.</p>
-                        <p class="price">$00.01</p>
-                        <button class="add-to-cart" onclick="addToCart('ferrari jacket F1', 00.01)">Add to Cart</button>
-                    </div>
-                </article>
-                 <article class="product-card">
-                    <img src="images/mens.jpg" alt="Gothic Dark Hoodie">
-                    <div class="product-info">
-                        <h3>Gothic Dark Hoodie</h3>
-                        <p>A gothic dark print hoodie with eerie skulls and moonlit designs on a deep black base. Soft, comfy, and perfect for a bold, edgy look.</p>
-                        <p class="price">$25.50</p>
-                        <button class="add-to-cart" onclick="addToCart('Gothic Dark Hoodie', 25.50)">Add to Cart</button>
-                    </div>
-                </article>
-                  <article class="product-card">
-                    <img src="images/mens1.jpg" alt="Print Hoodie">
-                    <div class="product-info">
-                        <h3>Print Hoodie</h3>
-                        <p>A stylish print hoodie featuring unique designs on a comfortable, soft fabric. Perfect for casual wear with a trendy and eye-catching look</p>
-                        <p class="price">$22.10</p>
-                        <button class="add-to-cart" onclick="addToCart('Print Hoodie', 22.10)">Add to Cart</button>
-                    </div>
-                </article>
-                 <article class="product-card">
-                    <img src="images/mens2.jpg" alt="Full Face Mask">
-                    <div class="product-info">
-                        <h3>Full Face Mask</h3>
-                        <p>A skull print balaclava full-face mask with a bold, edgy design. Made from breathable, stretchy fabric for a comfortable and snug fit. Perfect for outdoor activities, cosplay, or adding a gothic touch to your style.</p>
-                        <p class="price">$7.00</p>
-                        <button class="add-to-cart" onclick="addToCart('Full Face Mask', 7.00, true)">Add to Cart</button>
-                    </div>
-                </article>
-                    <article class="product-card">
-                    <img src="images/mens3.jpg" alt="Urban Edge Hooded Jacket">
-                    <div class="product-info">
-                        <h3>Urban Edge Hooded Jacket</h3>
-                        <p>Stylish and comfortable, this men's casual hooded jacket features a solid color design with a modern fit. Made from durable, soft fabric, it provides warmth and effortless everyday style.</p>
-                        <p class="price">$22.10</p>
-                        <button class="add-to-cart" onclick="addToCart('Urban Edge Hooded Jacket', 22.10)">Add to Cart</button>
-                    </div>
-                </article>
-                <!-- المزيد من المنتجات -->
-            </div>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
-    </footer>
 
-    <script>
+<header>
+    <h1>Hoodies Collection</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html" class="active">Products</a></li>
+            <li><a href="cart.html">Cart <span id="cart-count">0</span></a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="container">
+    <section class="products">
+        <article class="product-card">
+            <img src="images/BALACRAVA.jpg" alt="Balaclava Zip">
+            <h3>Balaclava Zip</h3>
+            <p>Stylish hoodie with integrated face cover.</p>
+            <p class="price">$0.01</p>
+            <button class="add-to-cart" onclick="addToCart('Balaclava Zip', 0.01)">Add to Cart</button>
+        </article>
+
+        <article class="product-card">
+            <img src="images/ferrari.jpg" alt="Ferrari Jacket F1">
+            <h3>Ferrari Jacket F1</h3>
+            <p>Bold modern design for everyday wear.</p>
+            <p class="price">$0.01</p>
+            <button class="add-to-cart" onclick="addToCart('Ferrari Jacket F1', 0.01)">Add to Cart</button>
+        </article>
+
+        <article class="product-card">
+            <img src="images/mens.jpg" alt="Gothic Dark Hoodie">
+            <h3>Gothic Dark Hoodie</h3>
+            <p>A gothic dark print hoodie with eerie skulls and moonlit designs.</p>
+            <p class="price">$25.50</p>
+            <button class="add-to-cart" onclick="addToCart('Gothic Dark Hoodie', 25.50)">Add to Cart</button>
+        </article>
+
+        <article class="product-card">
+            <img src="images/mens1.jpg" alt="Print Hoodie">
+            <h3>Print Hoodie</h3>
+            <p>Stylish hoodie with unique designs for casual wear.</p>
+            <p class="price">$22.10</p>
+            <button class="add-to-cart" onclick="addToCart('Print Hoodie', 22.10)">Add to Cart</button>
+        </article>
+
+        <article class="product-card">
+            <img src="images/mens2.jpg" alt="Full Face Mask">
+            <h3>Full Face Mask</h3>
+            <p>Bold skull print mask with breathable fabric.</p>
+            <p class="price">$7.00</p>
+            <p class="free-shipping">🚚 Free Shipping</p>
+            <button class="add-to-cart" onclick="addToCart('Full Face Mask', 7.00, true)">Add to Cart</button>
+        </article>
+
+        <article class="product-card">
+            <img src="images/mens3.jpg" alt="Urban Edge Hooded Jacket">
+            <h3>Urban Edge Hooded Jacket</h3>
+            <p>Stylish, modern fit, perfect for everyday wear.</p>
+            <p class="price">$22.10</p>
+            <button class="add-to-cart" onclick="addToCart('Urban Edge Hooded Jacket', 22.10)">Add to Cart</button>
+        </article>
+    </section>
+</div>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+   function addToCart(productName, price, freeShipping = false) {
+    let existingProduct = cart.find(item => item.name === productName);
+    if (existingProduct) {
+        existingProduct.quantity += 1;
+    } else {
+        cart.push({ name: productName, price: parseFloat(price), quantity: 1, freeShipping });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    alert(`${productName} added to cart! ${freeShipping ? '🚚 Free Shipping included!' : ''}`);
+}
+
+
+    function updateCartCount() {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('cart-count').textContent = totalCount;
+    }
 
-        function addToCart(productName, price) {
-            const existingProduct = cart.find(item => item.name === productName);
-            if (existingProduct) {
-                existingProduct.quantity += 1;
-            } else {
-                cart.push({ name: productName, price: parseFloat(price), quantity: 1 });
-            }
-            localStorage.setItem('cart', JSON.stringify(cart));
-            alert(`${productName} added to cart!`);
-        }
-    </script>
+    document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
+
 </body>
 </html>
+
 
 
