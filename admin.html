@@ -3,47 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Manage Orders</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f4f4f4; }
+    </style>
 </head>
 <body>
-    <h1>Manage Orders</h1>
-
-    <label for="order-id">Order ID:</label>
-    <input type="text" id="order-id" placeholder="Enter Order ID">
-
-    <label for="order-status">Order Status:</label>
-    <select id="order-status">
-        <option value="Pending">Pending</option>
-        <option value="Processing">Processing</option>
-        <option value="Shipped">Shipped</option>
-        <option value="Delivered">Delivered</option>
-    </select>
-
-    <button id="update-status-button">Update Status</button>
+    <h1>Admin Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Address</th>
+                <th>Products</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="orders-table"></tbody>
+    </table>
 
     <script>
-        // استيراد مكتبة Supabase
-        const { createClient } = supabase;
         const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // 🔐 استخدم مفتاح الـ Admin الحقيقي
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        document.getElementById('update-status-button').addEventListener('click', async () => {
-            const orderId = document.getElementById('order-id').value;
-            const newStatus = document.getElementById('order-status').value;
-
-            const { data, error } = await supabase
-                .from('orders')
-                .update({ status: newStatus })
-                .eq('id', orderId);
+        async function fetchOrders() {
+            const { data, error } = await supabase.from('orders').select('*');
 
             if (error) {
-                alert('Error updating status: ' + error.message);
-            } else {
-                alert('Order status updated successfully!');
+                console.error('Error fetching orders:', error);
+                return;
             }
-        });
+
+            const tableBody = document.getElementById('orders-table');
+            tableBody.innerHTML = '';
+
+            data.forEach(order => {
+                const productDetails = order.products.map(p => 
+                    `${p.product} (Size: ${p.size}, Qty: ${p.quantity})`
+                ).join('<br>');
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${order.name}</td>
+                        <td>${order.address}</td>
+                        <td>${productDetails}</td>
+                        <td>${order.total_amount} USD</td>
+                        <td>${order.status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        fetchOrders();
     </script>
 </body>
 </html>
+
