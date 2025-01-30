@@ -1,1 +1,80 @@
-IJ
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoodies Collection</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+    <header>
+        <h1>Pants Collection</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html" class="active">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- تصنيف المنتجات -->
+        <section class="products">
+            <h2>Our Premium Pants</h2>
+            <div class="product-grid">
+                <!-- بطاقة المنتج -->
+                <article class="product-card">
+                    <img src="images/mimo.jpg" alt="Dark Pant">
+                    <div class="product-info">
+                        <h3>Dark Pant</h3>
+                        <p>A sleek and versatile dark pant with a modern fit. Made from high-quality, comfortable fabric, perfect for casual or semi-formal wear with a timeless, stylish look.</p>
+                        <p class="price">$19.00</p>
+                        <button class="add-to-cart" onclick="addToCart('Dark Pant', 19.00)">Add to Cart</button>
+                    </div>
+                </article>
+                <!-- منتج آخر -->
+                <article class="product-card">
+                    <img src="images/mimo1.jpg" alt="Dragon Pant">
+                    <div class="product-info">
+                        <h3>Dragon Pant</h3>
+                        <p>Bold modern design for everyday wear.</p>
+                        <p class="price">$20.00</p>
+                        <button class="add-to-cart" onclick="addToCart('Dragon Pant', 20.00)">Add to Cart</button>
+                    </div>
+                </article>
+                 <article class="product-card">
+                    <img src="images/mimo2.jpg" alt="Great Pant">
+                    <div class="product-info">
+                        <h3>Great Pant</h3>
+                        <p>A comfortable and stylish pant with a modern fit. Made from high-quality fabric, perfect for everyday wear, offering both versatility and durability.</p>
+                        <p class="price">$18.5</p>
+                        <button class="add-to-cart" onclick="addToCart('Great Pant', 18.50)">Add to Cart</button>
+                    </div>
+                </article>
+                <!-- المزيد من المنتجات -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function addToCart(productName, price) {
+            const existingProduct = cart.find(item => item.name === productName);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ name: productName, price: parseFloat(price), quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${productName} added to cart!`);
+        }
+    </script>
+</body>
+</html>
+
+
