@@ -89,7 +89,7 @@
                 alert("Your cart is empty!");
                 return;
             }
-            let totalWithShipping = cart.reduce((sum, item) => sum + (item.price * item.quantity) + (shippingRates[item.name]?.[item.shipping] || 0), 0);
+            let totalWithShipping = cart.reduce((sum, item) => sum + (item.price * item.quantity) + (shippingRates[item.name]?.[item.shipping] || 25), 0);
             localStorage.setItem('totalPrice', totalWithShipping.toFixed(2));
             window.location.href = 'checkout.html';
         }
