@@ -74,82 +74,99 @@ const totalAmount = cart.reduce((sum, item) => {
             alert('Your cart is empty! Please add items to proceed.');
             window.location.href = 'cart.html';
         }
+paypal.Buttons({
+    createOrder: function (data, actions) {
+        return actions.order.create({
+            purchase_units: [{
+                amount: { value: totalAmount.toFixed(2) },
+                payee: { email_address: "10crimson.blade01@gmail.com" },
+            }],
+        });
+    },
+    onApprove: async function (data, actions) {
+        const order = await actions.order.capture();
 
-        paypal.Buttons({
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: { value: totalAmount.toFixed(2) },
-                        payee: { email_address: "10crimson.blade01@gmail.com" },
-                    }],
-                });
-            },
-            onApprove: async function (data, actions) {
-                const order = await actions.order.capture();
+        const name = document.getElementById('name').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const gender = document.getElementById('gender').value;
 
-                const name = document.getElementById('name').value.trim();
-                const address = document.getElementById('address').value.trim();
-                const size = document.getElementById('size').value;
-                const gender = document.getElementById('gender').value;
+        if (!name || !address || !gender) {
+            alert('Please fill in all the fields before proceeding.');
+            return;
+        }
 
-                if (!name || !address || !size || !gender) {
-                    alert('Please fill in all the fields before proceeding.');
-                    return;
+        // ✅ جلب المنتجات من السلة
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length === 0) {
+            alert("Your cart is empty!");
+            return;
+        }
+
+        // ✅ إعادة هيكلة بيانات المنتجات
+        const purchasedProducts = cart.map(item => ({
+            product: item.name,
+            size: item.size, // الحجم لكل منتج
+            quantity: item.quantity,
+            price: item.price
+        }));
+
+        // ✅ تجهيز بيانات الطلب قبل الإرسال
+        const orderData = {
+            name,
+            address,
+            gender,
+            products: purchasedProducts, // ✅ هنا نرسل جميع المنتجات
+            total_amount: totalAmount,
+            status: 'Paid',
+            created_at: new Date().toISOString(),
+            paypal_order_id: order.id,
+        };
+
+        try {
+            const { data: insertedData, error } = await supabase
+                .from('orders')
+                .insert([orderData])
+                .select('id');
+
+            if (error) {
+                console.error('Error inserting into Supabase:', error.message);
+                alert(`Error saving order: ${error.message}`);
+                return;
+            }
+
+            const orderId = insertedData[0].id;
+
+            Swal.fire({
+                title: 'Thank You!',
+                html: `<p>Your Order ID is:</p><strong>${orderId}</strong><p>Please copy your Order ID for future reference.</p>`,
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'Copy ID',
+                cancelButtonText: 'Close',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigator.clipboard.writeText(orderId)
+                        .then(() => Swal.fire('Copied!', 'Your Order ID has been copied.', 'success'))
+                        .catch((err) => Swal.fire('Error!', 'Failed to copy Order ID. Please copy it manually.', 'error'));
                 }
 
-                const orderData = {
-                    name,
-                    address,
-                    size,
-                    gender,
-                    total_amount: totalAmount,
-                    status: 'Paid',
-                    created_at: new Date().toISOString(),
-                    paypal_order_id: order.id,
-                };
+                window.location.href = `track-order.html?orderId=${orderId}`;
+            });
 
-                try {
-                    const { data: insertedData, error } = await supabase
-                        .from('orders')
-                        .insert([orderData])
-                        .select('id');
+            // ✅ مسح السلة بعد إتمام الطلب
+            localStorage.removeItem('cart');
+        } catch (err) {
+            console.error('Unexpected error:', err);
+            alert('An unexpected error occurred. Please try again.');
+        }
+    },
+    onError: function (err) {
+        console.error('PayPal error:', err);
+        alert('Payment failed. Please try again.');
+    },
+}).render('#paypal-button-container');
 
-                    if (error) {
-                        console.error('Error inserting into Supabase:', error.message);
-                        alert(`Error saving order: ${error.message}`);
-                        return;
-                    }
-
-                    const orderId = insertedData[0].id;
-
-                    Swal.fire({
-                        title: 'Thank You!',
-                        html: `<p>Your Order ID is:</p><strong>${orderId}</strong><p>Please copy your Order ID for future reference.</p>`,
-                        icon: 'success',
-                        showCancelButton: true,
-                        confirmButtonText: 'Copy ID',
-                        cancelButtonText: 'Close',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            navigator.clipboard.writeText(orderId)
-                                .then(() => Swal.fire('Copied!', 'Your Order ID has been copied.', 'success'))
-                                .catch((err) => Swal.fire('Error!', 'Failed to copy Order ID. Please copy it manually.', 'error'));
-                        }
-
-                        window.location.href = `track-order.html?orderId=${orderId}`;
-                    });
-
-                    localStorage.removeItem('cart');
-                } catch (err) {
-                    console.error('Unexpected error:', err);
-                    alert('An unexpected error occurred. Please try again.');
-                }
-            },
-            onError: function (err) {
-                console.error('PayPal error:', err);
-                alert('Payment failed. Please try again.');
-            },
-        }).render('#paypal-button-container');
+       
     </script>
 </body>
 </html>
