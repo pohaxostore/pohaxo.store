@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-shirts Collection</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+    <header>
+        <h1> T-shirts Collection</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html" class="active">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- تصنيف المنتجات -->
+        <section class="products">
+            <h2>Our Premium T-shirts</h2>
+            <div class="product-grid">
+                <!-- بطاقة المنتج -->
+                <article class="product-card">
+                    <img src="images/zoo.jpg.webp" alt="Black Death Shoes">
+                    <div class="product-info">
+                        <h3>Black Death Shoes</h3>
+                        <p>A bold and edgy Black Death shoe with a sleek dark design. Crafted for comfort and durability, it features a rugged yet stylish look, perfect for those who embrace gothic and alternative fashion.</p>
+                        <p class="price">$22.00</p>
+                        <button class="add-to-cart" onclick="addToCart('Black Death Shoes', 22.00)">Add to Cart</button>
+                    </div>
+                </article>
+                <!-- منتج آخر -->
+                <article class="product-card">
+                    <img src="images/zoo1.jpg.webp" alt="White Death Shoes">
+                    <div class="product-info">
+                        <h3>White Death Shoes</h3>
+                        <p>A striking White Death shoe with a bold, edgy design. Crafted for comfort and durability, it combines a sleek white aesthetic with a rebellious touch, perfect for making a statement.</p>
+                        <p class="price">$22.00</p>
+                        <button class="add-to-cart" onclick="addToCart('White Death Shoes', 22.00)">Add to Cart</button>
+                    </div>
+                </article>
+                 <article class="product-card">
+                    <img src="images/zoo2.jpg.webp" alt="Black And White Shoes">
+                    <div class="product-info">
+                        <h3>Black And White Shoes</h3>
+                        <p>Stylish and versatile black and white shoes with a sleek, modern design. Crafted for comfort and durability, perfect for casual wear or adding a bold touch to any outfit.</p>
+                        <p class="price">$28.99</p>
+                        <button class="add-to-cart" onclick="addToCart('Black And White Shoes', 28.99)">Add to Cart</button>
+                    </div>
+                </article>
+                <!-- المزيد من المنتجات -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function addToCart(productName, price) {
+            const existingProduct = cart.find(item => item.name === productName);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ name: productName, price: parseFloat(price), quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${productName} added to cart!`);
+        }
+    </script>
+</body>
+</html>
