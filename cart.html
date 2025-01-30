@@ -19,7 +19,7 @@
             <h2>Items in Your Cart</h2>
             <table class="cart-table">
                 <thead>
-                    <tr><th>Product</th><th>Price</th><th>Quantity</th><th>Shipping</th><th>Total</th><th>Actions</th></tr>
+                    <tr><th>Product</th><th>Price</th><th>Quantity</th><th>Size</th><th>Shipping</th><th>Total</th><th>Actions</th></tr>
                 </thead>
                 <tbody id="cart-items"></tbody>
             </table>
@@ -31,10 +31,18 @@
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let shippingRates = {
             "Balaclava Zip": { "USA": 7, "SPAIN": 8, "FRANCE": 9, "MOROCCO": 2, "Other": 10 },
-            "ferrari jacket F1": { "USA": 7, "SPAIN": 8, "FRANCE": 9, "MOROCCO": 2, "Other": 10  },
+            "ferrari jacket F1": { "USA": 7, "SPAIN": 8, "FRANCE": 9, "MOROCCO": 2, "Other": 10 },
             "Tablet": { "USA": 15, "Europe": 20, "Asia": 25, "Other": 30 }
         };
-
+        
+        function getSizeOptions(productName) {
+            if (productName.toLowerCase().includes("shoe")) {
+                return ['38', '39', '40', '41', '42', '43', '44'];
+            } else {
+                return ['S', 'M', 'L', 'XL', 'XXL'];
+            }
+        }
+        
         function updateCart() {
             const cartItems = document.getElementById('cart-items');
             const totalPriceElement = document.getElementById('total-price');
@@ -45,17 +53,24 @@
                 let shippingCost = shippingRates[item.name]?.[item.shipping] || 25;
                 let itemTotal = (item.price * item.quantity) + shippingCost;
                 total += itemTotal;
+                let sizeOptions = getSizeOptions(item.name).map(size => `<option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>`).join('');
+                
                 cartItems.innerHTML += `
                     <tr>
                         <td>${item.name}</td>
                         <td>${item.price.toFixed(2)} USD</td>
                         <td><input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)"></td>
                         <td>
+                            <select onchange="updateSize(${index}, this.value)">
+                                ${sizeOptions}
+                            </select>
+                        </td>
+                        <td>
                             <select onchange="updateShipping(${index}, this.value)">
                                 <option value="USA" ${item.shipping === "USA" ? "selected" : ""}>USA - $${shippingRates[item.name]?.USA || 25}</option>
-                                <option value="Europe" ${item.shipping === "SPAIN" ? "selected" : ""}>SPAIN - $${shippingRates[item.name]?.SPAIN || 25}</option>
-                                <option value="Asia" ${item.shipping === "FRANCE" ? "selected" : ""}>FRANCE - $${shippingRates[item.name]?.FRANCE || 25}</option>
-                                <option value="Asia" ${item.shipping === "MOROCCO" ? "selected" : ""}>MOROCCO - $${shippingRates[item.name]?.MOROCCO || 25}</option>
+                                <option value="SPAIN" ${item.shipping === "SPAIN" ? "selected" : ""}>SPAIN - $${shippingRates[item.name]?.SPAIN || 25}</option>
+                                <option value="FRANCE" ${item.shipping === "FRANCE" ? "selected" : ""}>FRANCE - $${shippingRates[item.name]?.FRANCE || 25}</option>
+                                <option value="MOROCCO" ${item.shipping === "MOROCCO" ? "selected" : ""}>MOROCCO - $${shippingRates[item.name]?.MOROCCO || 25}</option>
                                 <option value="Other" ${item.shipping === "Other" ? "selected" : ""}>Other - $${shippingRates[item.name]?.Other || 25}</option>
                             </select>
                         </td>
@@ -68,6 +83,12 @@
 
         function updateQuantity(index, quantity) {
             cart[index].quantity = Math.max(1, parseInt(quantity));
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function updateSize(index, size) {
+            cart[index].size = size;
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCart();
         }
@@ -98,6 +119,7 @@
     </script>
 </body>
 </html>
+
 
 
 
