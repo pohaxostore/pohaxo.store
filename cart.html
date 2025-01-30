@@ -105,11 +105,36 @@
             updateCart();
         }
 
-        function checkout() {
-            if (cart.length === 0) {
-                alert("Your cart is empty!");
-                return;
-            }
+       const supabaseUrl = "https://https://jmtblmywbuigkgteaaky.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI";
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+async function checkout() {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    let orderData = cart.map(item => ({
+        product_name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        shipping: item.shipping,
+        free_shipping: item.freeShipping
+    }));
+
+    const { data, error } = await supabase.from('orders').insert(orderData);
+
+    if (error) {
+        console.error("Error saving order:", error);
+        alert("Failed to process order.");
+    } else {
+        alert("Order placed successfully!");
+        localStorage.removeItem('cart');
+        window.location.href = 'checkout.html';
+    }
+}
+
      let totalWithShipping = cart.reduce((sum, item) => 
     sum + (item.price * item.quantity) + (item.freeShipping ? 0 : (shippingRates[item.name]?.[item.shipping] || 25)), 
     0
