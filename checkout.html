@@ -63,12 +63,13 @@
 
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const shippingRates = { "USA": 10, "Europe": 15, "Asia": 20, "Other": 25 };
-
 const totalAmount = cart.reduce((sum, item) => {
-    const shippingCost = shippingRates[item.shipping] || 25;
+    const shippingCost = (productShippingRates[item.name]?.[item.shipping] !== undefined) 
+        ? productShippingRates[item.name][item.shipping] 
+        : 0;
+    
     return sum + (item.price * item.quantity) + shippingCost;
 }, 0);
-
 
         if (!totalAmount) {
             alert('Your cart is empty! Please add items to proceed.');
