@@ -136,6 +136,11 @@
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCart(); // تأكد من إعادة حساب السعر الإجمالي هنا
 }
+        function updateSize(index, newSize) {
+    cart[index].size = newSize; // ✅ حفظ الحجم الجديد
+    localStorage.setItem('cart', JSON.stringify(cart)); // ✅ تحديث التخزين المحلي
+}
+
    function updateCart() {
     const cartItems = document.getElementById('cart-items');
     const totalPriceElement = document.getElementById('total-price');
@@ -156,7 +161,7 @@
                 <td>${item.name}</td>
                 <td>
                     <select onchange="updateSize(${index}, this.value)">
-                        ${sizeOptions.map(size => `<option value="${size}" ${item.size == size ? "selected" : ""}>${size}</option>`).join('')}
+                        ${sizeOptions.map(size => `<option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>`).join('')}
                     </select>
                 </td>
                 <td>${formatPrice(item.price)} USD</td>
