@@ -116,7 +116,11 @@
         function formatPrice(price) {
             return parseFloat(price).toFixed(2);
         }
-
+    function removeItem(index) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCart();
+    }
         function updateCart() {
             const cartItems = document.getElementById('cart-items');
             const totalPriceElement = document.getElementById('total-price');
