@@ -29,15 +29,6 @@
                 <textarea id="address" placeholder="Your Shipping Address" rows="4" required></textarea>
             </div>
             <div class="form-group">
-                <label for="size">Select Size:</label>
-                <select id="size" required>
-                    <option value="S">Small (S)</option>
-                    <option value="M">Medium (M)</option>
-                    <option value="L">Large (L)</option>
-                    <option value="XL">Extra Large (XL)</option>
-                </select>
-            </div>
-            <div class="form-group">
                 <label for="gender">Select Gender:</label>
                 <select id="gender" required>
                     <option value="Male">Male</option>
@@ -112,12 +103,13 @@ paypal.Buttons({
         }
 
         // ✅ إعادة هيكلة بيانات المنتجات
-        const purchasedProducts = cart.map(item => ({
-            product: item.name,
-            size: item.size, // الحجم لكل منتج
-            quantity: item.quantity,
-            price: item.price
-        }));
+      const purchasedProducts = cart.map(item => ({
+    product: item.name,
+    size: item.size || "Not specified", // تعيين قيمة افتراضية في حالة عدم توفر الحجم
+    quantity: item.quantity,
+    price: item.price
+}));
+
 
         // ✅ تجهيز بيانات الطلب قبل الإرسال
         const orderData = {
