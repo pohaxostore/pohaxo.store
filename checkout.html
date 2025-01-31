@@ -103,12 +103,15 @@ paypal.Buttons({
         }
 
         // ✅ إعادة هيكلة بيانات المنتجات
-      const purchasedProducts = cart.map(item => ({
-    product: item.name,
-    size: item.size || "Not specified", // تعيين قيمة افتراضية في حالة عدم توفر الحجم
-    quantity: item.quantity,
-    price: item.price
-}));
+    const purchasedProducts = cart.map(item => {
+    return {
+        product: item.name,
+        size: item.size ? item.size : "Not specified", // تأكيد أن الحجم يتم إرساله دائمًا
+        quantity: item.quantity,
+        price: item.price
+    };
+});
+
 
 
         // ✅ تجهيز بيانات الطلب قبل الإرسال
