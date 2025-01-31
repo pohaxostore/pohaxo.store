@@ -121,6 +121,14 @@
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCart();
     }
+        function checkout() {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+    alert("Redirecting to checkout...");
+    window.location.href = "checkout.html"; // ضع رابط صفحة الدفع هنا
+}
         function updateCart() {
             const cartItems = document.getElementById('cart-items');
             const totalPriceElement = document.getElementById('total-price');
