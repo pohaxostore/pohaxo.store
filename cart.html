@@ -129,6 +129,14 @@
     alert("Redirecting to checkout...");
     window.location.href = "checkout.html"; // ضع رابط صفحة الدفع هنا
 }
+     function updateQuantity(index, newQuantity) {
+    if (newQuantity < 1) return;
+
+    cart[index].quantity = parseInt(newQuantity);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart(); // تأكد من إعادة حساب السعر الإجمالي هنا
+}
+   
         function updateCart() {
             const cartItems = document.getElementById('cart-items');
             const totalPriceElement = document.getElementById('total-price');
