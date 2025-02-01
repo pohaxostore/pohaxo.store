@@ -137,11 +137,11 @@ header nav ul li a.active {
     <script>
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         const productShippingRates = {
-            "Nike Shoes": { "USA": 10, "Europe": 15, "Asia": 20, "Other": 25 },
-            "Dragon Pant": { "USA": 12, "Europe": 18, "Asia": 22, "Other": 28 },
-            "T-Shirt": { "USA": 5, "Europe": 8, "Asia": 10, "Other": 15 },
-            "Jacket": { "USA": 7, "Europe": 10, "Asia": 12, "Other": 18 },
-            "Watch": { "USA": 0, "Europe": 0, "Asia": 0, "Other": 0 } // Free shipping
+            "Nike Shoes": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Balaclava Zip": { "USA": 7, "Morocco": 2, "Spain": 8, "France": 9, "Other": 10 },
+            "T-Shirt": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Jacket": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Watch": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
         };
 
         function formatPrice(price) {
@@ -185,7 +185,7 @@ header nav ul li a.active {
 
         const sizeOptions = item.name.includes("Shoes") // 🔹 التأكد أن المنتج هو حذاء
             ? [37, 38, 39, 40, 41, 42, 43, 44]
-            : ["S", "M", "L", "XL"];
+            : ["S", "M", "L", "X", "XL"];
 
         cartItems.innerHTML += `
             <tr>
@@ -200,8 +200,9 @@ header nav ul li a.active {
                 <td>
                     <select onchange="updateShipping(${index}, this.value)">
                         <option value="USA" ${item.shipping === "USA" ? "selected" : ""}>USA - $${productShippingRates[item.name]?.USA || 0}</option>
-                        <option value="Europe" ${item.shipping === "Europe" ? "selected" : ""}>Europe - $${productShippingRates[item.name]?.Europe || 0}</option>
-                        <option value="Asia" ${item.shipping === "Asia" ? "selected" : ""}>Asia - $${productShippingRates[item.name]?.Asia || 0}</option>
+                        <option value="Europe" ${item.shipping === "Morocco" ? "selected" : ""}>Morocco - $${productShippingRates[item.name]?.Morocco || 0}</option>
+                        <option value="Asia" ${item.shipping === "Spain" ? "selected" : ""}>Spain - $${productShippingRates[item.name]?. Spain|| 0}</option>
+                         <option value="Asia" ${item.shipping === "France" ? "selected" : ""}>France - $${productShippingRates[item.name]?. France|| 0}</option>
                         <option value="Other" ${item.shipping === "Other" ? "selected" : ""}>Other - $${productShippingRates[item.name]?.Other || 0}</option>
                     </select>
                 </td>
