@@ -52,11 +52,11 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
         const supabase = createClient(supabaseUrl, supabaseKey);
 const productShippingRates = {
-    "Nike Shoes": { "USA": 10, "Europe": 15, "Asia": 20, "Other": 25 },
-    "Dragon Pant": { "USA": 12, "Europe": 18, "Asia": 22, "Other": 28 },
-    "T-Shirt": { "USA": 5, "Europe": 8, "Asia": 10, "Other": 15 },
-    "Jacket": { "USA": 7, "Europe": 10, "Asia": 12, "Other": 18 },
-    "Watch": { "USA": 0, "Europe": 0, "Asia": 0, "Other": 0 } // Free shipping
+     "Nike Shoes": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Balaclava Zip": { "USA": 7, "Morocco": 2, "Spain": 8, "France": 9, "Other": 10 },
+            "T-Shirt": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Jacket": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Watch": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
 };
 
 const cart = JSON.parse(localStorage.getItem('cart')) || [];
