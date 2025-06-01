@@ -25,12 +25,12 @@
             <div class="product-grid">
                 <!-- بطاقة المنتج -->
                 <article class="product-card">
-                    <img src="images/mimo.jpg" alt="Dark Pant">
+                    <img src="images/pico.jpg" alt="4k tiny action camera wifi sports">
                     <div class="product-info">
-                        <h3>Dark Pant</h3>
-                        <p>A sleek and versatile dark pant with a modern fit. Made from high-quality, comfortable fabric, perfect for casual or semi-formal wear with a timeless, stylish look.</p>
-                        <p class="price">$19.00</p>
-                        <button class="add-to-cart" onclick="addToCart('Dark Pant', 19.00)">Add to Cart</button>
+                        <h3>4k tiny action camera wifi sports</h3>
+                        <p>Small, tough, and ready for action. Shoots 4K video, 16MP photos, and connects via WiFi. Waterproof, wide-angle, and perfect for sports and travel.</p>
+                        <p class="price">$55.00</p>
+                        <button class="add-to-cart" onclick="addToCart('4k tiny action camera wifi sports', 55.00)">Add to Cart</button>
                     </div>
                 </article>
                 <!-- منتج آخر -->
