@@ -187,18 +187,29 @@ header nav ul li a.active {
         const itemTotal = (item.price * item.quantity) + shippingCost;
         total += itemTotal;
 
-        const sizeOptions = item.name.includes("Shoes") // 🔹 التأكد أن المنتج هو حذاء
-            ? [37, 38, 39, 40, 41, 42, 43, 44]
-            : ["S", "M", "L", "X", "XL"];
+      let sizeField = '';
+if (item.name.includes("Shoes")) {
+    const shoeSizes = [37, 38, 39, 40, 41, 42, 43, 44];
+    sizeField = `
+        <select onchange="updateSize(${index}, this.value)">
+            ${shoeSizes.map(size => `<option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>`).join('')}
+        </select>
+    `;
+} else if (item.name.includes("T-Shirt") || item.name.includes("Hoodie") || item.name.includes("Jacket")) {
+    const clothingSizes = ["S", "M", "L", "X", "XL"];
+    sizeField = `
+        <select onchange="updateSize(${index}, this.value)">
+            ${clothingSizes.map(size => `<option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>`).join('')}
+        </select>
+    `;
+} else {
+    sizeField = `<span>-</span>`; // المنتج لا يحتوي على خيار المقاس
+}
 
         cartItems.innerHTML += `
             <tr>
                 <td>${item.name}</td>
-                <td>
-                    <select onchange="updateSize(${index}, this.value)">
-                        ${sizeOptions.map(size => `<option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>`).join('')}
-                    </select>
-                </td>
+               <td>${sizeField}</td>
                 <td>${formatPrice(item.price)} USD</td>
                 <td><input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)"></td>
                <td>
