@@ -195,7 +195,15 @@ if (item.name.includes("Shoes")) {
             ${shoeSizes.map(size => `<option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>`).join('')}
         </select>
     `;
-} else if (item.name.includes("T-Shirt") (item.name.includes("Balaclava Zip")(item.name.includes("Pant") || item.name.includes("Hoodie") || item.name.includes("Jacket")) {
+} 
+else if (
+    item.name.includes("T-Shirt")      ||
+    item.name.includes("Balaclava Zip")||
+    item.name.includes("Pant")         ||
+    item.name.includes("Hoodie")       ||
+    item.name.includes("Full Face Mask")       ||
+    item.name.includes("Jacket")
+) {
     const clothingSizes = ["S", "M", "L", "X", "XL"];
     sizeField = `
         <select onchange="updateSize(${index}, this.value)">
