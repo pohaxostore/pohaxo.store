@@ -1,1 +1,59 @@
-;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolls Collection</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+    <header>
+        <h1>Dolls Collection</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html" class="active">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- تصنيف المنتجات -->
+        <section class="products">
+            <h2>Our Premium Dolls</h2>
+            <div class="product-grid">
+                <!-- بطاقة المنتج -->
+                <article class="product-card">
+                    <img src="images/Satochi.jpg" alt="Satochi">
+                    <div class="product-info">
+                        <h3>Satochi</h3>
+                        <p>A sleek and versatile dark pant with a modern fit. Made from high-quality, comfortable fabric, perfect for casual or semi-formal wear with a timeless, stylish look.</p>
+                        <p class="price">$14.99</p>
+                        <button class="add-to-cart" onclick="addToCart('Satochi', 14.99)">Add to Cart</button>
+                    </div>
+                </article>
+                <!-- المزيد من المنتجات -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function addToCart(productName, price) {
+            const existingProduct = cart.find(item => item.name === productName);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ name: productName, price: parseFloat(price), quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${productName} added to cart!`);
+        }
+    </script>
+</body>
+</html>
