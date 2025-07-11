@@ -51,135 +51,126 @@
         const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI';
         const supabase = createClient(supabaseUrl, supabaseKey);
-const productShippingRates = {
-     "Nike Shoes": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+        const productShippingRates = {
+            "Nike Shoes": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
             "Balaclava Zip": { "USA": 7, "Morocco": 2, "Spain": 8, "France": 9, "Other": 10 },
             "T-Shirt": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
             "Jacket": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
             "Watch": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
-};
+        };
 
-const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-const totalAmount = cart.reduce((sum, item) => {
-    const shippingCost = (productShippingRates[item.name]?.[item.shipping] !== undefined) 
-        ? productShippingRates[item.name][item.shipping] 
-        : 0;
-    
-    return sum + (item.price * item.quantity) + shippingCost;
-}, 0);
-
+        const totalAmount = cart.reduce((sum, item) => {
+            const shippingCost = (productShippingRates[item.name]?.[item.shipping] !== undefined) 
+                ? productShippingRates[item.name][item.shipping] 
+                : 0;
+            
+            return sum + (item.price * item.quantity) + shippingCost;
+        }, 0);
 
         if (!totalAmount) {
             alert('Your cart is empty! Please add items to proceed.');
             window.location.href = 'cart.html';
         }
-paypal.Buttons({
-    createOrder: function (data, actions) {
-        return actions.order.create({
-            purchase_units: [{
-                amount: { value: totalAmount.toFixed(2) },
-                payee: { email_address: "10crimson.blade01@gmail.com" },
-            }],
-        });
-    },
-    onApprove: async function (data, actions) {
-        const order = await actions.order.capture();
 
-        const name = document.getElementById('name').value.trim();
-        const address = document.getElementById('address').value.trim();
-        const gender = document.getElementById('gender').value;
+        paypal.Buttons({
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: { value: totalAmount.toFixed(2) },
+                        payee: { email_address: "10crimson.blade01@gmail.com" },
+                    }],
+                });
+            },
+            onApprove: async function (data, actions) {
+                const order = await actions.order.capture();
 
-        if (!name || !address || !gender) {
-            alert('Please fill in all the fields before proceeding.');
-            return;
-        }
+                // استخرج البريد الإلكتروني من PayPal
+                const payerEmail = order.payer.email_address; 
 
-        // ✅ جلب المنتجات من السلة
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        if (cart.length === 0) {
-            alert("Your cart is empty!");
-            return;
-        }
+                const name = document.getElementById('name').value.trim();
+                const address = document.getElementById('address').value.trim();
+                const gender = document.getElementById('gender').value;
 
-        // ✅ إعادة هيكلة بيانات المنتجات
-    const purchasedProducts = cart.map(item => {
-    return {
-        product: item.name,
-        size: item.size ? item.size : "Not specified", // تأكيد أن الحجم يتم إرساله دائمًا
-        quantity: item.quantity,
-        price: item.price
-    };
-});
-
-
-
-        // ✅ تجهيز بيانات الطلب قبل الإرسال
-        const orderData = {
-            name,
-            address,
-            gender,
-            products: purchasedProducts, // ✅ هنا نرسل جميع المنتجات
-            total_amount: totalAmount,
-            status: 'Paid',
-            created_at: new Date().toISOString(),
-            paypal_order_id: order.id,
-        };
-
-        try {
-            const { data: insertedData, error } = await supabase
-                .from('orders')
-                .insert([orderData])
-                .select('id');
-
-            if (error) {
-                console.error('Error inserting into Supabase:', error.message);
-                alert(`Error saving order: ${error.message}`);
-                return;
-            }
-
-            const orderId = insertedData[0].id;
-
-            Swal.fire({
-                title: 'Thank You!',
-                html: `<p>Your Order ID is:</p><strong>${orderId}</strong><p>Please copy your Order ID for future reference.</p>`,
-                icon: 'success',
-                showCancelButton: true,
-                confirmButtonText: 'Copy ID',
-                cancelButtonText: 'Close',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    navigator.clipboard.writeText(orderId)
-                        .then(() => Swal.fire('Copied!', 'Your Order ID has been copied.', 'success'))
-                        .catch((err) => Swal.fire('Error!', 'Failed to copy Order ID. Please copy it manually.', 'error'));
+                if (!name || !address || !gender) {
+                    alert('Please fill in all the fields before proceeding.');
+                    return;
                 }
 
-                window.location.href = `track-order.html?orderId=${orderId}`;
-            });
+                // جلب المنتجات من السلة
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                if (cart.length === 0) {
+                    alert("Your cart is empty!");
+                    return;
+                }
 
-            // ✅ مسح السلة بعد إتمام الطلب
-            localStorage.removeItem('cart');
-        } catch (err) {
-            console.error('Unexpected error:', err);
-            alert('An unexpected error occurred. Please try again.');
-        }
-    },
-    onError: function (err) {
-        console.error('PayPal error:', err);
-        alert('Payment failed. Please try again.');
-    },
-}).render('#paypal-button-container');
+                // إعادة هيكلة بيانات المنتجات
+                const purchasedProducts = cart.map(item => {
+                    return {
+                        product: item.name,
+                        size: item.size ? item.size : "Not specified", // تأكيد أن الحجم يتم إرساله دائمًا
+                        quantity: item.quantity,
+                        price: item.price
+                    };
+                });
 
-       
+                // تجهيز بيانات الطلب
+                const orderData = {
+                    name,
+                    address,
+                    gender,
+                    email: payerEmail, // إضافة البريد الإلكتروني
+                    products: purchasedProducts,
+                    total_amount: totalAmount,
+                    status: 'Paid',
+                    created_at: new Date().toISOString(),
+                    paypal_order_id: order.id,
+                };
+
+                try {
+                    const { data: insertedData, error } = await supabase
+                        .from('orders')
+                        .insert([orderData])
+                        .select('id');
+
+                    if (error) {
+                        console.error('Error inserting into Supabase:', error.message);
+                        alert(`Error saving order: ${error.message}`);
+                        return;
+                    }
+
+                    const orderId = insertedData[0].id;
+
+                    Swal.fire({
+                        title: 'Thank You!',
+                        html: `<p>Your Order ID is:</p><strong>${orderId}</strong><p>Please copy your Order ID for future reference.</p>`,
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: 'Copy ID',
+                        cancelButtonText: 'Close',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            navigator.clipboard.writeText(orderId)
+                                .then(() => Swal.fire('Copied!', 'Your Order ID has been copied.', 'success'))
+                                .catch((err) => Swal.fire('Error!', 'Failed to copy Order ID. Please copy it manually.', 'error'));
+                        }
+
+                        window.location.href = `track-order.html?orderId=${orderId}`;
+                    });
+
+                    // مسح السلة بعد إتمام الطلب
+                    localStorage.removeItem('cart');
+                } catch (err) {
+                    console.error('Unexpected error:', err);
+                    alert('An unexpected error occurred. Please try again.');
+                }
+            },
+            onError: function (err) {
+                console.error('PayPal error:', err);
+                alert('Payment failed. Please try again.');
+            },
+        }).render('#paypal-button-container');
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
