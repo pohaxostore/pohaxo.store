@@ -1,177 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout</title>
-    <link rel="stylesheet" href="style1.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <link rel="stylesheet" href="style1.css" />
 </head>
 <body>
-    <header>
-        <h1>Checkout</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="cart.html">Cart</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section class="checkout-section">
-            <h2>Order Details</h2>
-            <div class="form-group">
-                <label for="name">Full Name:</label>
-                <input type="text" id="name" placeholder="Your Name" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Shipping Address:</label>
-                <textarea id="address" placeholder="Your Shipping Address" rows="4" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="gender">Select Gender:</label>
-                <select id="gender" required>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
-            <div id="paypal-button-container"></div>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
-    </footer> 
+  <header>
+    <h1>Checkout</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <!-- Load PayPal SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AQOy865ool-s4lbnULnkXAs0hrCfBYaLV-P87ZK3VqckJLejTayI7gdkxz6liI7wRF0inhmQ9Ph4A4yH&currency=USD"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'; 
+  <main>
+    <section class="checkout-section">
+      <h2>Order Details</h2>
+      <div class="form-group">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" placeholder="Your Name" required />
+      </div>
+      <div class="form-group">
+        <label for="address">Shipping Address:</label>
+        <textarea id="address" placeholder="Your Shipping Address" rows="4" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="gender">Select Gender:</label>
+        <select id="gender" required>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div id="paypal-button-container"></div>
+    </section>
+  </main>
 
-        const supabaseUrl = 'https://xuyofqefruxdvxrszqec.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1eW9mcWVmcnV4ZHZ4cnN6cWVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyNzE5NjksImV4cCI6MjA2Nzg0Nzk2OX0.fFDB6CX0xeOT2BclnVHicgjbPAwf6Je0e_ukaXtUzXc
-';
-        const supabase = createClient(supabaseUrl, supabaseKey);
-const productShippingRates = {
-     "Nike Shoes": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
-            "Balaclava Zip": { "USA": 7, "Morocco": 2, "Spain": 8, "France": 9, "Other": 10 },
-            "T-Shirt": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
-            "Jacket": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
-            "Watch": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
-}; 
+  <footer>
+    <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
+  </footer>
 
-const cart = JSON.parse(localStorage.getItem('cart')) || []; 
+  <!-- PayPal SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AQOy865ool-s4lbnULnkXAs0hrCfBYaLV-P87ZK3VqckJLejTayI7gdkxz6liI7wRF0inhmQ9Ph4A4yH&currency=USD"></script>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-const totalAmount = cart.reduce((sum, item) => {
-    const shippingCost = (productShippingRates[item.name]?.[item.shipping] !== undefined) 
-        ? productShippingRates[item.name][item.shipping] 
-        : 0;
-    
-    return sum + (item.price * item.quantity) + shippingCost;
-}, 0);
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
+    const supabaseUrl = 'https://xuyofqefruxdvxrszqec.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1eW9mcWVmcnV4ZHZ4cnN6cWVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyNzE5NjksImV4cCI6MjA2Nzg0Nzk2OX0.fFDB6CX0xeOT2BclnVHicgjbPAwf6Je0e_ukaXtUzXc';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-        if (!totalAmount) {
-            alert('Your cart is empty! Please add items to proceed.');
-            window.location.href = 'cart.html';
-        }
-paypal.Buttons({
-    createOrder: function (data, actions) {
-        return actions.order.create({
-            purchase_units: [{
-                amount: { value: totalAmount.toFixed(2) },
-                payee: { email_address: "10crimson.blade01@gmail.com" },
-            }],
-        });
-    },
-    onApprove: async function (data, actions) {
-        const order = await actions.order.capture(); 
+    const productShippingRates = {
+      "Nike Shoes": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+      "Balaclava Zip": { "USA": 7, "Morocco": 2, "Spain": 8, "France": 9, "Other": 10 },
+      "T-Shirt": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+      "Jacket": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+      "Watch": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+    };
 
-        const name = document.getElementById('name').value.trim();
-        const address = document.getElementById('address').value.trim();
-        const gender = document.getElementById('gender').value; 
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        if (!name || !address || !gender) {
-            alert('Please fill in all the fields before proceeding.');
-            return;
-        } 
+    const totalAmount = cart.reduce((sum, item) => {
+      const shippingCost = productShippingRates[item.name]?.[item.shipping] || 0;
+      return sum + (item.price * item.quantity) + shippingCost;
+    }, 0);
 
-        // ✅ جلب المنتجات من السلة
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        if (cart.length === 0) {
-            alert("Your cart is empty!");
-            return;
-        } 
+    if (!totalAmount) {
+      alert('Your cart is empty! Please add items to proceed.');
+      window.location.href = 'cart.html';
+    }
 
-        // ✅ إعادة هيكلة بيانات المنتجات
-    const purchasedProducts = cart.map(item => {
-    return {
-        product: item.name,
-        size: item.size ? item.size : "Not specified", // تأكيد أن الحجم يتم إرساله دائمًا
-        quantity: item.quantity,
-        price: item.price
-    };
-});
+    paypal.Buttons({
+      createOrder: function (data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            amount: { value: totalAmount.toFixed(2) },
+            payee: { email_address: "10crimson.blade01@gmail.com" },
+          }],
+        });
+      },
+      onApprove: async function (data, actions) {
+        const order = await actions.order.capture();
 
+        const name = document.getElementById('name').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const gender = document.getElementById('gender').value;
 
+        if (!name || !address || !gender) {
+          alert('Please fill in all the fields before proceeding.');
+          return;
+        }
 
-        // ✅ تجهيز بيانات الطلب قبل الإرسال
-        const orderData = {
-            name,
-            address,
-            gender,
-            products: purchasedProducts, // ✅ هنا نرسل جميع المنتجات
-            total_amount: totalAmount,
-            status: 'Paid',
-            created_at: new Date().toISOString(),
-            paypal_order_id: order.id,
-        }; 
+        const purchasedProducts = cart.map(item => ({
+          product: item.name,
+          size: item.size || "Not specified",
+          quantity: item.quantity,
+          price: item.price,
+        }));
 
-        try {
-            const { data: insertedData, error } = await supabase
-                .from('orders')
-                .insert([orderData])
-                .select('id'); 
+        const orderData = {
+          name,
+          address,
+          gender,
+          products: purchasedProducts,
+          total_amount: totalAmount,
+          status: 'Paid',
+          created_at: new Date().toISOString(),
+          paypal_order_id: order.id,
+        };
 
-            if (error) {
-                console.error('Error inserting into Supabase:', error.message);
-                alert(`Error saving order: ${error.message}`);
-                return;
-            } 
+        try {
+          const { data: insertedData, error } = await supabase
+            .from('orders')
+            .insert([orderData])
+            .select('id');
 
-            const orderId = insertedData[0].id; 
+          if (error) {
+            console.error('Supabase error:', error.message);
+            alert('Error saving order: ' + error.message);
+            return;
+          }
 
-            Swal.fire({
-                title: 'Thank You!',
-                html: `<p>Your Order ID is:</p><strong>${orderId}</strong><p>Please copy your Order ID for future reference.</p>`,
-                icon: 'success',
-                showCancelButton: true,
-                confirmButtonText: 'Copy ID',
-                cancelButtonText: 'Close',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    navigator.clipboard.writeText(orderId)
-                        .then(() => Swal.fire('Copied!', 'Your Order ID has been copied.', 'success'))
-                        .catch((err) => Swal.fire('Error!', 'Failed to copy Order ID. Please copy it manually.', 'error'));
-                } 
+          const orderId = insertedData[0].id;
 
-                window.location.href = `track-order.html?orderId=${orderId}`;
-            }); 
+          Swal.fire({
+            title: 'Thank You!',
+            html: `<p>Your Order ID is:</p><strong>${orderId}</strong><p>Please copy your Order ID for future reference.</p>`,
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Copy ID',
+            cancelButtonText: 'Close',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigator.clipboard.writeText(orderId)
+                .then(() => Swal.fire('Copied!', 'Order ID copied.', 'success'))
+                .catch(() => Swal.fire('Error!', 'Failed to copy. Copy it manually.', 'error'));
+            }
 
-            // ✅ مسح السلة بعد إتمام الطلب
-            localStorage.removeItem('cart');
-        } catch (err) {
-            console.error('Unexpected error:', err);
-            alert('An unexpected error occurred. Please try again.');
-        }
-    },
-    onError: function (err) {
-        console.error('PayPal error:', err);
-        alert('Payment failed. Please try again.');
-    },
-}).render('#paypal-button-container'); 
+            // Redirect to tracking page
+            window.location.href = `track-order.html?orderId=${orderId}`;
+          });
 
-       
-    </script>
+          // Clear cart
+          localStorage.removeItem('cart');
+        } catch (err) {
+          console.error('Unexpected error:', err);
+          alert('Unexpected error occurred.');
+        }
+      },
+      onError: function (err) {
+        console.error('PayPal error:', err);
+        alert('Payment failed. Please try again.');
+      }
+    }).render('#paypal-button-container');
+  </script>
 </body>
 </html>
