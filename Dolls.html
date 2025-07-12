@@ -29,8 +29,8 @@
                     <div class="product-info">
                         <h3>Satochi</h3>
                         <p>Cute doll with soft hair and stylish clothes — perfect for kids!</p>
-                        <p class="price">$0.01</p>
-                        <button class="add-to-cart" onclick="addToCart('Satochi', 0.01)">Add to Cart</button>
+                        <p class="price">$14.99</p>
+                        <button class="add-to-cart" onclick="addToCart('Satochi', 14.99)">Add to Cart</button>
                     </div>
                 </article>
                 <!-- المزيد من المنتجات -->
@@ -40,23 +40,20 @@
     <footer>
         <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
     </footer>
-<script>
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-function addToCart(productName, price) {
-    const product = {
-        name: productName,
-        price: price,
-        quantity: 1,
-        size: null,
-        shipping: "USA"
-    };
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    cart.push(product);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert(`${productName} added to cart!`);
-}
-</script>
-
+        function addToCart(productName, price) {
+            const existingProduct = cart.find(item => item.name === productName);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ name: productName, price: parseFloat(price), quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${productName} added to cart!`);
+        }
+    </script>
 </body>
 </html>
