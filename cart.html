@@ -1,181 +1,245 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Cart</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-    }
-    header {
-      background: #222;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    table {
-      width: 95%;
-      margin: 20px auto;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
-    .total {
-      font-weight: bold;
-      font-size: 18px;
-      text-align: right;
-      padding: 20px;
-      width: 95%;
-      margin: auto;
-    }
-    .checkout-btn {
-      display: block;
-      margin: 20px auto;
-      padding: 12px 24px;
-      background: #ff758c;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    select, input[type=number] {
-      padding: 4px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background: linear-gradient(to bottom, #e0eafc, #cfdef3);
+            min-height: 100vh;
+        } 
+
+     header {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+} 
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+} 
+
+header nav ul li a:hover,
+header nav ul li a.active {
+    background: #ff758c;
+}
+
+
+        header h1 {
+            font-size: 32px;
+            margin: 0;
+            font-weight: 600;
+            background: linear-gradient(to right, #ff7eb3, #ff758c);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        } 
+
+        .cart-section {
+            padding: 40px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 40px auto;
+        } 
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        } 
+
+        .cart-table th, .cart-table td {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        } 
+
+        .checkout-btn {
+            padding: 12px 25px;
+            background: #ff758c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        } 
+
+        .checkout-btn:hover {
+            background: #ff4b6e;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Your Cart</h1>
-  </header>
+    <header>
+        <h1>Your Cart</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="track-order.html">Track Your Order</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="products.html">Products</a></li>
+            </ul>
+        </nav>
+    </header> 
 
-  <table>
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Size</th>
-        <th>Price</th>
-        <th>Qty</th>
-        <th>Shipping</th>
-        <th>Total</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="cart-items"></tbody>
-  </table>
+    <main>
+        <section class="cart-section">
+            <h2>Items in Your Cart</h2>
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Size</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Shipping</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    <!-- Items will be dynamically populated -->
+                </tbody>
+            </table>
+            <div class="cart-summary">
+                <h3>Total: <span id="total-price">0.00 USD</span></h3>
+                <button class="checkout-btn" onclick="checkout()">Checkout</button>
+            </div>
+        </section>
+    </main> 
 
-  <div class="total">
-    Total: <span id="total-price">0.00 USD</span>
-  </div>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const productShippingRates = {
+            "Nike Shoes": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Balaclava Zip": { "USA": 7, "Morocco": 2, "Spain": 8, "France": 9, "Other": 10 },
+            "T-Shirt": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Jacket": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+            "Watch": { "USA": 10, "Morocco": 15, "Spain": 20, "France": 22, "Other": 25 },
+        }; 
 
-  <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        function formatPrice(price) {
+            return parseFloat(price).toFixed(2);
+        }
+    function removeItem(index) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCart();
+    }
+        function checkout() {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+    alert("Redirecting to checkout...");
+    window.location.href = "checkout.html"; // ضع رابط صفحة الدفع هنا
+}
+     function updateQuantity(index, newQuantity) {
+    if (newQuantity < 1) return; 
 
-  <script>
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart[index].quantity = parseInt(newQuantity);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart(); // تأكد من إعادة حساب السعر الإجمالي هنا
+}
+        function updateSize(index, newSize) {
+    cart[index].size = newSize; // ✅ حفظ الحجم الجديد
+    localStorage.setItem('cart', JSON.stringify(cart)); // ✅ تحديث التخزين المحلي
+}
+        function updateShipping(index, newShipping) {
+    cart[index].shipping = newShipping; // ✅ تحديث الدولة المختارة للشحن
+    localStorage.setItem('cart', JSON.stringify(cart)); // ✅ تحديث التخزين المحلي
+    updateCart(); // ✅ إعادة حساب الإجمالي بعد تغيير الشحن
+}
+   function updateCart() {
+    const cartItems = document.getElementById('cart-items');
+    const totalPriceElement = document.getElementById('total-price');
+    cartItems.innerHTML = '';
+    let total = 0; 
 
-    const productShippingRates = {
-      "Nike Shoes": { "USA": 10, "Morocco": 15, "Other": 20 },
-      "Balaclava Zip": { "USA": 7, "Morocco": 2, "Other": 10 },
-      "T-Shirt": { "USA": 10, "Morocco": 15, "Other": 20 },
-      "Jacket": { "USA": 10, "Morocco": 15, "Other": 20 },
-      "Watch": { "USA": 5, "Morocco": 5, "Other": 8 }
-    };
+    cart.forEach((item, index) => {
+        const shippingCost = productShippingRates[item.name]?.[item.shipping] || 0;
+        const itemTotal = (item.price * item.quantity) + shippingCost;
+        total += itemTotal; 
 
-    function formatPrice(price) {
-      return parseFloat(price).toFixed(2);
-    }
+      let sizeField = '';
+if (item.name.includes("Shoes")) {
+    const shoeSizes = [37, 38, 39, 40, 41, 42, 43, 44];
+    sizeField = `
+        <select onchange="updateSize(${index}, this.value)">
+            ${shoeSizes.map(size => `<option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>`).join('')}
+        </select>
+    `;
+} 
+else if (
+    item.name.includes("T-Shirt")      ||
+    item.name.includes("Balaclava Zip")||
+    item.name.includes("Pant")         ||
+    item.name.includes("Hoodie")       ||
+    item.name.includes("Full Face Mask")       ||
+    item.name.includes("Jacket")
+) {
+    const clothingSizes = ["S", "M", "L", "X", "XL"];
+    sizeField = `
+        <select onchange="updateSize(${index}, this.value)">
+            ${clothingSizes.map(size => `<option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>`).join('')}
+        </select>
+    `;
+} else {
+    sizeField = `<span>-</span>`; // المنتج لا يحتوي على خيار المقاس
+} 
 
-    function updateSize(index, newSize) {
-      cart[index].size = newSize;
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
+        cartItems.innerHTML += `
+            <tr>
+                <td>${item.name}</td>
+               <td>${sizeField}</td>
+                <td>${formatPrice(item.price)} USD</td>
+                <td><input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)"></td>
+               <td>
+    <select onchange="updateShipping(${index}, this.value)">
+        <option value="USA" ${item.shipping === "USA" ? "selected" : ""}>USA - $${productShippingRates[item.name]?.USA || 0}</option>
+        <option value="Morocco" ${item.shipping === "Morocco" ? "selected" : ""}>Morocco - $${productShippingRates[item.name]?.Morocco || 0}</option>
+        <option value="Spain" ${item.shipping === "Spain" ? "selected" : ""}>Spain - $${productShippingRates[item.name]?.Spain || 0}</option>
+        <option value="France" ${item.shipping === "France" ? "selected" : ""}>France - $${productShippingRates[item.name]?.France || 0}</option>
+        <option value="Other" ${item.shipping === "Other" ? "selected" : ""}>Other - $${productShippingRates[item.name]?.Other || 0}</option>
+    </select>
+</td>
+                <td>${formatPrice(itemTotal)} USD</td>
+                <td><button onclick="removeItem(${index})">Remove</button></td>
+            </tr>
+        `;
+    }); 
 
-    function updateQuantity(index, quantity) {
-      if (quantity < 1) return;
-      cart[index].quantity = parseInt(quantity);
-      localStorage.setItem('cart', JSON.stringify(cart));
-      updateCart();
-    }
+    totalPriceElement.textContent = `${formatPrice(total)} USD`;
+}
 
-    function updateShipping(index, country) {
-      cart[index].shipping = country;
-      localStorage.setItem('cart', JSON.stringify(cart));
-      updateCart();
-    }
 
-    function removeItem(index) {
-      cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
-      updateCart();
-    }
-
-    function updateCart() {
-      const cartItems = document.getElementById('cart-items');
-      const totalPriceElement = document.getElementById('total-price');
-      cartItems.innerHTML = '';
-      let total = 0;
-
-      if (!cart || cart.length === 0) {
-        cartItems.innerHTML = `<tr><td colspan="7">Your cart is empty.</td></tr>`;
-        totalPriceElement.textContent = "0.00 USD";
-        return;
-      }
-
-      cart.forEach((item, index) => {
-        const shippingCost = productShippingRates[item.name]?.[item.shipping] || 0;
-        const itemTotal = (item.price * item.quantity) + shippingCost;
-        total += itemTotal;
-
-        let sizeField = '-';
-        if (item.name.includes("Shoes")) {
-          const shoeSizes = [37, 38, 39, 40, 41, 42];
-          sizeField = `<select onchange="updateSize(${index}, this.value)">
-            ${shoeSizes.map(size => `<option value="${size}" ${item.size == size ? 'selected' : ''}>${size}</option>`).join('')}
-          </select>`;
-        } else if (["T-Shirt", "Pant", "Jacket", "Hoodie", "Balaclava Zip"].some(keyword => item.name.includes(keyword))) {
-          const clothingSizes = ["S", "M", "L", "XL"];
-          sizeField = `<select onchange="updateSize(${index}, this.value)">
-            ${clothingSizes.map(size => `<option value="${size}" ${item.size == size ? 'selected' : ''}>${size}</option>`).join('')}
-          </select>`;
-        }
-
-        cartItems.innerHTML += `
-          <tr>
-            <td>${item.name}</td>
-            <td>${sizeField}</td>
-            <td>${formatPrice(item.price)} USD</td>
-            <td><input type="number" min="1" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)"></td>
-            <td>
-              <select onchange="updateShipping(${index}, this.value)">
-                <option value="USA" ${item.shipping === "USA" ? "selected" : ""}>USA</option>
-                <option value="Morocco" ${item.shipping === "Morocco" ? "selected" : ""}>Morocco</option>
-                <option value="Other" ${item.shipping === "Other" ? "selected" : ""}>Other</option>
-              </select>
-            </td>
-            <td>${formatPrice(itemTotal)} USD</td>
-            <td><button onclick="removeItem(${index})">Remove</button></td>
-          </tr>`;
-      });
-
-      totalPriceElement.textContent = formatPrice(total) + " USD";
-    }
-
-    function checkout() {
-      alert("Redirecting to checkout...");
-      window.location.href = "checkout.html";
-    }
-
-    document.addEventListener('DOMContentLoaded', updateCart);
-  </script>
+        document.addEventListener('DOMContentLoaded', updateCart);
+    </script>
 </body>
 </html>
