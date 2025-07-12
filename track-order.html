@@ -1,334 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Your Order</title>
-    <style>
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    color: #333;
-    background: linear-gradient(to bottom, #e0eafc, #cfdef3);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Your Order</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      background: linear-gradient(to bottom, #e0eafc, #cfdef3);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-header {
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    text-align: center;
-    padding: 15px 0;
-    width: 100%;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
 
-header h1 {
-    font-size: 28px;
-    font-weight: 700;
-    background: linear-gradient(to right, #ff758c, #ff7eb3);
-    -webkit-background-clip: text;
-    color: transparent;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-}
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(to right, #ff758c, #ff7eb3);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
 
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0 0;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
 
-nav ul li {
-    display: inline;
-}
+    nav ul li {
+      display: inline;
+    }
 
-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: background 0.3s ease;
-}
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+    }
 
-nav ul li a:hover {
-    background: #ff758c;
-}
+    nav ul li a:hover {
+      background: #ff758c;
+    }
 
-main {
-    padding: 40px 20px;
-    text-align: center;
-    width: 100%;
-    max-width: 600px;
-}
+    main {
+      padding: 40px 20px;
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+    }
 
-form {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
-}
+    form {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
 
-input[type="text"] {
-    padding: 12px;
-    width: 250px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
+    input[type="text"] {
+      padding: 12px;
+      width: 250px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
 
-input[type="text"]:focus {
-    border-color: #4caf50;
-}
+    input[type="text"]:focus {
+      border-color: #4caf50;
+    }
 
-button {
-    padding: 12px 20px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s ease;
-}
+    button {
+      padding: 12px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
 
-button:hover {
-    background-color: #45a049;
-}
+    button:hover {
+      background-color: #45a049;
+    }
 
-.progress-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    width: 100%;
-    max-width: 500px;
-    margin: 20px auto;
-}
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin: 20px auto;
+    }
 
-.progress-bar::before {
-    content: '';
-    position: absolute;
-    top: 20px;
-    left: 10%;
-    width: 80%;
-    height: 5px;
-    background: #ddd;
-    z-index: 0;
-    transition: background 0.3s ease;
-}
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      width: 80%;
+      height: 5px;
+      background: #ddd;
+      z-index: 0;
+    }
 
-.progress-bar .step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    position: relative;
-    z-index: 1;
-}
+    .progress-bar .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
 
-.progress-bar .circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    border: 3px solid #ddd;
-    transition: all 0.3s ease-in-out;
-}
+    .progress-bar .circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      border: 3px solid #ddd;
+      transition: all 0.3s ease-in-out;
+    }
 
-.progress-bar .circle.active {
-    background-color: #4caf50;
-    border-color: #4caf50;
-}
+    .progress-bar .circle.active {
+      background-color: #4caf50;
+      border-color: #4caf50;
+    }
 
-.progress-bar .label {
-    margin-top: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
+    .progress-bar .label {
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
 
-#status-text {
-    margin-top: 20px;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-    animation: fadeIn 0.5s ease-in-out;
-}
+    #status-text {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333;
+    }
 
-.loading {
-    font-size: 1em;
-    text-align: center;
-    margin-top: 10px;
-    font-weight: bold;
-    color: #666;
-}
+    .loading {
+      font-size: 1em;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #666;
+    }
 
-footer {
-    text-align: center;
-    padding: 15px;
-    margin-top: auto;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    font-size: 14px;
-}
-</style>
+    footer {
+      text-align: center;
+      padding: 15px;
+      margin-top: auto;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Track Your Order</h1>
-         <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="contact.html">Contact Us</a></li>
-                <li><a href="cart.html">Cart</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <form id="track-form">
-            <input type="text" id="order-id" placeholder="Enter your order ID" required>
-            <button type="submit" id="track-button">Track Order</button>
-        </form>
+  <header>
+    <h1>Track Your Order</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </nav>
+  </header>
 
-        <div id="loading" class="loading" style="display: none;">Loading...</div>
+  <main>
+    <form id="track-form">
+      <input type="text" id="order-id" placeholder="Enter your order ID" required />
+      <button type="submit">Track Order</button>
+    </form>
 
-        <div class="progress-bar">
-            <div class="step">
-                <div class="circle">1</div>
-                <div class="label">Order Sent</div>
-            </div>
-            <div class="step">
-                <div class="circle">2</div>
-                <div class="label">In Transit</div>
-            </div>
-            <div class="step">
-                <div class="circle">3</div>
-                <div class="label">Delivered</div>
-            </div>
-        </div>
+    <div id="loading" class="loading" style="display: none;">Loading...</div>
 
-        <div id="order-status" style="display: none;">
-            <p id="status-text"></p>
-        </div>
-    </main>
-    <footer>
-        <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
-    </footer>
-<script type="module">
+    <div class="progress-bar">
+      <div class="step">
+        <div class="circle">1</div>
+        <div class="label">Paid</div>
+      </div>
+      <div class="step">
+        <div class="circle">2</div>
+        <div class="label">In Transit</div>
+      </div>
+      <div class="step">
+        <div class="circle">3</div>
+        <div class="label">Delivered</div>
+      </div>
+    </div>
+
+    <div id="order-status" style="display: none;">
+      <p id="status-text"></p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Pohaxo Store. All rights reserved.</p>
+  </footer>
+
+  <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const supabaseUrl = 'https://jmtblmywbuigkgteaaky.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdGJsbXl3YnVpZ2tndGVhYWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTc0MzUsImV4cCI6MjA1MjYzMzQzNX0.2d0_wH5uaKX64FxiR3RYmGevh2cF6Vs7VQ0k6zptIqI'; // ضع مفتاح Supabase هنا
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(
+      'https://xuyofqefruxdvxrszqec.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1eW9mcWVmcnV4ZHZ4cnN6cWVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyNzE5NjksImV4cCI6MjA2Nzg0Nzk2OX0.fFDB6CX0xeOT2BclnVHicgjbPAwf6Je0e_ukaXtUzXc'
+    );
 
     const trackForm = document.getElementById('track-form');
     const loadingElement = document.getElementById('loading');
     const statusText = document.getElementById('status-text');
     const steps = document.querySelectorAll('.step');
 
-    // تحديث شريط التقدم بناءً على حالة الطلب
     const updateProgressBar = (status) => {
-        steps.forEach((step, index) => {
-            step.classList.remove('active');
-            if (index === 0 && status === 'Order Sent') {
-                steps[0].classList.add('active');
-            } else if (index <= 1 && status === 'In Transit') {
-                steps[0].classList.add('active');
-                steps[1].classList.add('active');
-            } else if (status === 'Delivered') {
-                steps.forEach((s) => s.classList.add('active'));
-            }
-        });
+      steps.forEach((step) => step.querySelector('.circle').classList.remove('active'));
+
+      if (status === 'Paid') {
+        steps[0].querySelector('.circle').classList.add('active');
+      } else if (status === 'In Transit') {
+        steps[0].querySelector('.circle').classList.add('active');
+        steps[1].querySelector('.circle').classList.add('active');
+      } else if (status === 'Delivered') {
+        steps.forEach((step) => step.querySelector('.circle').classList.add('active'));
+      }
     };
 
-    // جلب حالة الطلب من قاعدة البيانات
     const fetchOrderStatus = async (orderId) => {
-        loadingElement.style.display = 'block';
-        statusText.innerText = '';
-        document.getElementById('order-status').style.display = 'none';
+      loadingElement.style.display = 'block';
+      statusText.innerText = '';
+      document.getElementById('order-status').style.display = 'none';
 
-        try {
-            const { data, error } = await supabase
-                .from('orders')
-                .select('status')
-                .eq('id', orderId)
-                .single();
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('status')
+          .eq('id', orderId)
+          .single();
 
-            loadingElement.style.display = 'none';
+        loadingElement.style.display = 'none';
 
-            if (error || !data) {
-                statusText.innerText = 'Order not found. Please check your Order ID.';
-            } else {
-                statusText.innerText = `Order Status: ${data.status}`;
-                updateProgressBar(data.status);
-            }
-
-            document.getElementById('order-status').style.display = 'block';
-        } catch (err) {
-            loadingElement.style.display = 'none';
-            statusText.innerText = 'Unexpected error occurred. Please try again later.';
+        if (error || !data) {
+          statusText.innerText = 'Order not found. Please check your Order ID.';
+        } else {
+          statusText.innerText = `Order Status: ${data.status}`;
+          updateProgressBar(data.status);
         }
+
+        document.getElementById('order-status').style.display = 'block';
+      } catch (err) {
+        loadingElement.style.display = 'none';
+        statusText.innerText = 'Unexpected error occurred. Please try again later.';
+      }
     };
 
-    // استخراج ID الطلب من رابط URL عند تحميل الصفحة
     document.addEventListener('DOMContentLoaded', async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('id'); // جلب ID الطلب من الرابط
-
-        if (orderId) {
-            document.getElementById('order-id').value = orderId; // تعبئة الحقل بـ ID الطلب
-            await fetchOrderStatus(orderId); // جلب حالة الطلب مباشرة
-        }
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
+      if (orderId) {
+        document.getElementById('order-id').value = orderId;
+        await fetchOrderStatus(orderId);
+      }
     });
 
-    // التعامل مع إرسال النموذج يدويًا
     trackForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const orderId = document.getElementById('order-id').value.trim();
-
-        if (!orderId) {
-            alert('Please enter a valid Order ID.');
-            return;
-        }
-
-        await fetchOrderStatus(orderId); // جلب حالة الطلب عند الإرسال
+      event.preventDefault();
+      const orderId = document.getElementById('order-id').value.trim();
+      if (!orderId) {
+        alert('Please enter a valid Order ID.');
+        return;
+      }
+      await fetchOrderStatus(orderId);
     });
-</script>
-
-  
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-     
-
-
-
-    
-
-
